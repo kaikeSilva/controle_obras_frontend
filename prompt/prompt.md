@@ -1,17 +1,252 @@
 preciso criar um crud para uma entidade aninha dentro de clientes, se trata da entidade: 
-Fonte Pagadora.
-Representa as origens dos recursos financeiros utilizados nos gastos de uma obra. clientes podem criar fontes pagadoras para utilizar nas suas obras.
-
-**Atributos:**
-- `id` (PK): Identificador único
-- `nome`: Nome da fonte pagadora
-- `descricao`: Descrição detalhada
-- `ativo`: Status da fonte (ativa/inativa)
-- `data_cadastro`: Data de criação do registro
-- `cliente_id` (FK): Referência ao cliente proprietário
-- timestamps (created_at, updated_at)
-- soft delete (deleted_at)
-- status (ativo/inativo)
+Obra.
+segue a documentacao das rotas e dos dados:
+openapi: 3.0.3
+info:
+  title: Obra API
+  version: '1.0'
+  description: |
+    Endpoints para gerenciamento de obras (CRUD, filtros, busca, soft delete).
+servers:
+  - url: /api
+paths:
+  /obras:
+    get:
+      summary: Lista obras
+      tags: [Obra]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: cliente_id
+          schema:
+            type: integer
+          description: Filtrar por cliente
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Buscar por nome, descrição ou status
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [em_andamento, concluida, pausada]
+          description: Filtrar por status
+        - in: query
+          name: ativo
+          schema:
+            type: boolean
+          description: Filtrar por ativo/inativo
+      responses:
+        '200':
+          description: Lista paginada de obras
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Obra'
+                  links:
+                    type: object
+                  meta:
+                    type: object
+    post:
+      summary: Criar obra
+      tags: [Obra]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ObraInput'
+      responses:
+        '201':
+          description: Obra criada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Obra'
+  /obras/{id}:
+    get:
+      summary: Exibe detalhes da obra
+      tags: [Obra]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detalhes da obra
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Obra'
+    put:
+      summary: Atualiza obra
+      tags: [Obra]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ObraInput'
+      responses:
+        '200':
+          description: Obra atualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Obra'
+    delete:
+      summary: Remove (soft delete) obra
+      tags: [Obra]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Obra removida
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /autocomplete/obras:
+    get:
+      summary: Lista obras para autocomplete
+      tags: [Autocomplete]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: cliente_id
+          schema:
+            type: integer
+          description: Filtrar obras por cliente
+      responses:
+        '200':
+          description: Lista de obras (id, nome)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AutocompleteItem'
+                  links:
+                    type: object
+                  meta:
+                    type: object
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Obra:
+      type: object
+      properties:
+        id:
+          type: integer
+        cliente_id:
+          type: integer
+        nome:
+          type: string
+        descricao:
+          type: string
+        endereco:
+          type: string
+        area_m2:
+          type: number
+          format: float
+        data_inicio:
+          type: string
+          format: date
+        prazo_estimado:
+          type: string
+          format: date
+        valor_estimado:
+          type: number
+          format: float
+        taxa_administracao:
+          type: number
+          format: float
+        status:
+          type: string
+          enum: [em_andamento, concluida, pausada]
+        ativo:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        deleted_at:
+          type: string
+          format: date-time
+    ObraInput:
+      type: object
+      properties:
+        cliente_id:
+          type: integer
+        nome:
+          type: string
+        descricao:
+          type: string
+        endereco:
+          type: string
+        area_m2:
+          type: number
+        data_inicio:
+          type: string
+          format: date
+        prazo_estimado:
+          type: string
+          format: date
+        valor_estimado:
+          type: number
+        taxa_administracao:
+          type: number
+        status:
+          type: string
+        ativo:
+          type: boolean
+    AutocompleteItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
 
 siga o passo a passo dado pelo seguinte guia:
 # Guia Prático - CRUD Aninhado (Entidade Filha dentro de Entidade Pai)
@@ -37,7 +272,7 @@ Este guia mostra como criar um CRUD de entidade filha dentro da tela de visualiz
 ### 📝 Ações
 1. **Documentar** estrutura da entidade filha
 2. **Identificar** se a API usa:
-   - Endpoints aninhados: `/clientes/{id}/fontes-pagadoras`
+   - Endpoints aninhados: `/fontes-pagadoras`
    - Endpoints separados: `/fontes-pagadoras?cliente_id={id}`
 3. **Mapear** campos obrigatórios e relacionamento
 
@@ -277,3 +512,4 @@ Este guia mostra como criar um CRUD de entidade filha dentro da tela de visualiz
 - **Estrutura:** Todos os arquivos seguem padrão de entidade filha
 
 Este padrão permite criar facilmente outros CRUDs aninhados (endereços, contatos, documentos, etc.) reutilizando o sistema de abas existente e mantendo consistência com o padrão do sistema.
+!!! IMPORTANTE: Hoje ja existe no sistema a implementacao funcional de um CRUD anihado, este eh o crud de Fontes Pagadoras, portanto, siga o padrao implementado para este CRUD.

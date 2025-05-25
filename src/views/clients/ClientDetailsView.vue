@@ -25,6 +25,13 @@
         >
           Fontes Pagadoras
         </div>
+        <div 
+          class="tab" 
+          :class="{ active: activeTab === 'obras' }"
+          @click="activeTab = 'obras'"
+        >
+          Obras
+        </div>
       </div>
 
       <div class="tab-content">
@@ -80,6 +87,11 @@
         <div v-if="activeTab === 'fontes-pagadoras'" class="fontes-pagadoras-section">
           <FontesPagadorasCrud :cliente-id="client.id" />
         </div>
+        
+        <!-- Tab Obras -->
+        <div v-if="activeTab === 'obras'" class="obras-section">
+          <ObrasCrud :cliente-id="client.id" />
+        </div>
       </div>
     </div>
     <div v-else class="empty-state">
@@ -111,6 +123,7 @@ import IconTrash from '@/components/icons/IconTrash.vue'
 import ConfirmationModal from '@/components/common/ConfirmationModal.vue'
 import { useNotificationStore } from '@/stores/notificationStore'
 import FontesPagadorasCrud from '@/components/fontesPagadoras/FontesPagadorasCrud.vue'
+import ObrasCrud from '@/components/obras/ObrasCrud.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -357,7 +370,8 @@ const formatDate = (dateString: string): string => {
   font-weight: 700;
 }
 
-.fontes-pagadoras-section {
+.fontes-pagadoras-section,
+.obras-section {
   padding: 0.5rem 0;
 }
 
