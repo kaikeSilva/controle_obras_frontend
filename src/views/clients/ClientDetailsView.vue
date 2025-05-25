@@ -11,7 +11,20 @@
 
     <div v-else-if="client" class="client-details">
       <div class="tabs">
-        <div class="tab active">Dados Gerais</div>
+        <div 
+          class="tab" 
+          :class="{ active: activeTab === 'dados-gerais' }"
+          @click="activeTab = 'dados-gerais'"
+        >
+          Dados Gerais
+        </div>
+        <div 
+          class="tab" 
+          :class="{ active: activeTab === 'fontes-pagadoras' }"
+          @click="activeTab = 'fontes-pagadoras'"
+        >
+          Fontes Pagadoras
+        </div>
       </div>
 
       <div class="tab-content">
@@ -35,7 +48,8 @@
           </div>
         </div>
 
-        <div class="data-section">
+        <!-- Tab Dados Gerais -->
+        <div v-if="activeTab === 'dados-gerais'" class="data-section">
           <div class="data-row">
             <div class="data-label">Nome:</div>
             <div class="data-value">{{ client.name }}</div>
@@ -60,6 +74,11 @@
             <div class="data-label">Última Atualização:</div>
             <div class="data-value">{{ formatDate(client.updated_at) }}</div>
           </div>
+        </div>
+        
+        <!-- Tab Fontes Pagadoras -->
+        <div v-if="activeTab === 'fontes-pagadoras'" class="fontes-pagadoras-section">
+          <FontesPagadorasCrud :cliente-id="client.id" />
         </div>
       </div>
     </div>
@@ -91,6 +110,7 @@ import IconEdit from '@/components/icons/IconEdit.vue'
 import IconTrash from '@/components/icons/IconTrash.vue'
 import ConfirmationModal from '@/components/common/ConfirmationModal.vue'
 import { useNotificationStore } from '@/stores/notificationStore'
+import FontesPagadorasCrud from '@/components/fontesPagadoras/FontesPagadorasCrud.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -100,6 +120,7 @@ const error = ref<string | null>(null)
 const notificationStore = useNotificationStore()
 const showDeleteModal = ref(false)
 const isDeleting = ref(false)
+const activeTab = ref('dados-gerais')
 
 const handleEdit = () => {
   if (client.value?.id) {
@@ -191,7 +212,9 @@ const formatDate = (dateString: string): string => {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import '@/styles/variables';
+@import '@/styles/mixins';
 .client-details-container {
   width: 100%;
   padding: 1.5rem;
@@ -252,7 +275,7 @@ const formatDate = (dateString: string): string => {
 }
 
 .client-header {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
   border-bottom: 1px solid #e5e7eb;
   padding-bottom: 1rem;
 }
@@ -308,23 +331,34 @@ const formatDate = (dateString: string): string => {
 
 .tabs {
   display: flex;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--color-border);
   margin-bottom: 1.5rem;
-  width: 100%;
 }
 
 .tab {
-  padding: 0.75rem 1.5rem;
-  font-weight: 500;
-  color: #6b7280;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  color: #4b5563; /* Cinza mais escuro para melhor contraste */
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: all 0.2s;
+  font-size: 0.95rem;
+}
+
+.tab:hover {
+  color: var(--color-primary);
+  background-color: rgba(79, 70, 229, 0.05);
 }
 
 .tab.active {
-  color: #4f46e5;
-  border-bottom-color: #4f46e5;
+  color: #3b82f6;
+  border-bottom-color: #3b82f6;
+  background-color: rgba(79, 70, 229, 0.08);
+  font-weight: 700;
+}
+
+.fontes-pagadoras-section {
+  padding: 0.5rem 0;
 }
 
 .tab-content {
@@ -332,7 +366,7 @@ const formatDate = (dateString: string): string => {
 }
 
 .client-header {
-  margin-bottom: 2rem;
+  margin-bottom: 0;
 }
 
 .client-name {

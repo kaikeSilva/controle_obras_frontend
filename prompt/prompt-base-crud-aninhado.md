@@ -1,19 +1,3 @@
-preciso criar um crud para uma entidade aninha dentro de clientes, se trata da entidade: 
-Fonte Pagadora.
-Representa as origens dos recursos financeiros utilizados nos gastos de uma obra. clientes podem criar fontes pagadoras para utilizar nas suas obras.
-
-**Atributos:**
-- `id` (PK): Identificador único
-- `nome`: Nome da fonte pagadora
-- `descricao`: Descrição detalhada
-- `ativo`: Status da fonte (ativa/inativa)
-- `data_cadastro`: Data de criação do registro
-- `cliente_id` (FK): Referência ao cliente proprietário
-- timestamps (created_at, updated_at)
-- soft delete (deleted_at)
-- status (ativo/inativo)
-
-siga o passo a passo dado pelo seguinte guia:
 # Guia Prático - CRUD Aninhado (Entidade Filha dentro de Entidade Pai)
 
 Este guia mostra como criar um CRUD de entidade filha dentro da tela de visualização de uma entidade pai (exemplo: Fontes Pagadoras dentro de Clientes).
