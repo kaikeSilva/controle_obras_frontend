@@ -35,6 +35,51 @@ const router = createRouter({
           }
         },
         {
+          path: 'gastos',
+          name: 'gastos',
+          component: () => import('../views/gastos/GastosView.vue'),
+          meta: {
+            title: 'Gastos',
+            breadcrumb: [
+              { title: 'Home', path: '/' },
+              { title: 'Gastos', path: '/gastos' }
+            ]
+          }
+        },
+        {
+          path: 'gastos/novo/:obra_id?',
+          name: 'new-gasto',
+          component: () => import('../views/gastos/GastoFormView.vue'),
+          props: route => ({ obraId: route.params.obra_id ? Number(route.params.obra_id) : null }),
+          meta: {
+            title: 'Novo Gasto',
+            breadcrumb: [
+              { title: 'Home', path: '/' },
+              { title: 'Gastos', path: '/gastos' },
+              { title: 'Novo Gasto' }
+            ]
+          }
+        },
+        {
+          path: 'gastos/:id/editar',
+          name: 'edit-gasto',
+          component: () => import('../views/gastos/GastoFormView.vue'),
+          meta: {
+            title: 'Editar Gasto',
+            breadcrumb: [
+              { title: 'Home', path: '/' },
+              { title: 'Gastos', path: '/gastos' },
+              {
+                title: 'Detalhes do Gasto',
+                dynamic: true,
+                getPath: (route: any) => route && route.params ? `/gastos/${route.params.id}` : '#'
+              },
+              { title: 'Editar Gasto' }
+            ],
+            requiresAuth: true
+          }
+        },
+        {
           path: 'categorias-gastos',
           name: 'categorias-gastos',
           component: () => import('../views/categoriasGastos/CategoriasGastosView.vue'),

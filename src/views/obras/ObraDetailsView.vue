@@ -9,8 +9,20 @@
     <div v-else-if="obra" class="obra-details">
       <!-- Abas de Navegação -->
       <div class="tabs">
-        <div class="tab active">Dados Gerais</div>
-        <!-- Adicionar outras abas aqui no futuro -->
+        <div 
+          class="tab" 
+          :class="{ active: activeTab === 'dados-gerais' }"
+          @click="activeTab = 'dados-gerais'"
+        >
+          Dados Gerais
+        </div>
+        <div 
+          class="tab" 
+          :class="{ active: activeTab === 'gastos' }"
+          @click="activeTab = 'gastos'"
+        >
+          Gastos
+        </div>
       </div>
 
       <div class="tab-content">
@@ -37,7 +49,7 @@
         </div>
 
         <!-- Conteúdo da Aba Dados Gerais -->
-        <div class="data-section">
+        <div v-if="activeTab === 'dados-gerais'" class="data-section">
           <h3 class="section-title">Informações da Obra</h3>
           <div class="data-grid">
             <div class="data-item"><span class="data-label">ID:</span> {{ obra.id }}</div>
@@ -53,6 +65,11 @@
             <div class="data-item"><span class="data-label">Criado em:</span> {{ formatDate(obra.created_at) }}</div>
             <div class="data-item"><span class="data-label">Atualizado em:</span> {{ formatDate(obra.updated_at) }}</div>
           </div>
+        </div>
+        
+        <!-- Tab Gastos -->
+        <div v-if="activeTab === 'gastos'" class="gastos-section">
+          <GastosCrud :obraId="obra.id" />
         </div>
       </div>
     </div>
@@ -85,6 +102,7 @@ import ConfirmationModal from '@/components/common/ConfirmationModal.vue'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { formatDate, formatCurrency } from '@/utils/formatters'
 import { useBreadcrumbStore } from '@/stores/breadcrumbStore'
+import GastosCrud from '@/components/gastos/GastosCrud.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -96,8 +114,15 @@ const obra = ref<Obra | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
 const showDeleteConfirm = ref(false)
+const activeTab = ref('dados-gerais')
 
 onMounted(async () => {
+  // Verificar se há uma aba ativa na query string
+  const tabFromQuery = route.query.active_tab as string;
+  if (tabFromQuery) {
+    activeTab.value = tabFromQuery;
+  }
+  
   const obraId = Number(route.params.id);
   console.log('[ObraDetailsView] obraId from route params:', obraId);
 
@@ -199,6 +224,18 @@ const handleDelete = async () => {
   .tab {
     padding: $spacing-md $spacing-lg;
     cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background-color: rgba($primary-color, 0.05);
+    }
+    
+    &.active {
+      border-bottom: 2px solid $primary-color;
+      color: $primary-color;
+      font-weight: 600;
+    }
     color: $text-gray;
     border-bottom: 2px solid transparent;
     transition: all 0.3s ease;
