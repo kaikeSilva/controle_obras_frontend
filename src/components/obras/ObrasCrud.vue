@@ -49,6 +49,7 @@
       
       <div v-else>
         <ObrasTable 
+          :cliente-id="cliente_id"
           :obras="obras" 
           :sort-by="sortBy" 
           :sort-direction="sortDirection" 

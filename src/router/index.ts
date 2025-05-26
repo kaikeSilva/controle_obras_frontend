@@ -23,6 +23,18 @@ const router = createRouter({
           redirect: '/clientes'
         },
         {
+          path: 'obras',
+          name: 'obras',
+          component: () => import('../views/obras/ObrasView.vue'),
+          meta: {
+            title: 'Obras',
+            breadcrumb: [
+              { title: 'Home', path: '/' },
+              { title: 'Obras', path: '/obras' }
+            ]
+          }
+        },
+        {
           path: 'obras/novo/:cliente_id?',
           name: 'new-obra',
           component: () => import('../views/obras/ObraFormView.vue'),

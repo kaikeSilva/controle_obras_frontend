@@ -4,9 +4,9 @@
     <table v-if="!isMobile" class="data-table">
       <thead>
         <tr>
-          <th @click="sortTable('id')" class="sortable-header">
-            ID
-            <span v-if="sortBy === 'id'" class="sort-icon">
+          <th v-if="!clienteId" @click="sortTable('cliente_id')" class="sortable-header">
+            Cliente
+            <span v-if="sortBy === 'cliente_id'" class="sort-icon">
               {{ sortDirection === 'asc' ? '↑' : '↓' }}
             </span>
           </th>
@@ -50,9 +50,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="obra in obras" :key="obra.id" :class="{ 'inactive-row': !obra.ativo }">
-          <td>{{ obra.id }}</td>
-          <td>{{ obra.nome }}</td>
+        <tr class="table-row" v-for="obra in obras" :key="obra.id" :class="{ 'inactive-row': !obra.ativo }">
+          <td v-if="!clienteId">
+            {{ obra.cliente?.nome }}
+          </td>
+          <td><span style="font-weight: bold;">{{ obra.id }}</span> {{ obra.nome }}</td>
           <td>{{ obra.endereco || '-' }}</td>
           <td>{{ formatDate(obra.data_inicio) }}</td>
           <td>{{ formatDate(obra.prazo_estimado) }}</td>
@@ -193,6 +195,7 @@ const props = defineProps<{
   sortBy: string
   sortDirection: 'asc' | 'desc'
   isMobile: boolean
+  clienteId: number | null
 }>()
 
 // Emits
@@ -255,12 +258,18 @@ const sortTable = (field: string) => {
 <style scoped>
 .table-container {
   width: 100%;
+  margin: 0;
+  padding: 0;
   overflow-x: auto;
 }
 
 .data-table {
   width: 100%;
   border-collapse: collapse;
+  background: white;
+  border-radius: 0;
+  overflow: hidden;
+  box-shadow: none;
   font-size: 0.875rem;
   text-align: left;
 }
@@ -281,8 +290,9 @@ const sortTable = (field: string) => {
 
 .sortable-header {
   cursor: pointer;
-  user-select: none;
   position: relative;
+  padding-right: 1.5rem;
+  user-select: none;
 }
 
 .sortable-header:hover {
@@ -290,8 +300,11 @@ const sortTable = (field: string) => {
 }
 
 .sort-icon {
-  margin-left: 0.25rem;
-  display: inline-block;
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
   font-size: 0.75rem;
 }
 
@@ -303,9 +316,10 @@ const sortTable = (field: string) => {
 .status-badge {
   display: inline-block;
   padding: 0.25rem 0.5rem;
-  border-radius: 9999px;
+  border-radius: 0.375rem;
   font-size: 0.75rem;
   font-weight: 500;
+  text-align: center;
   text-transform: capitalize;
 }
 
@@ -330,17 +344,18 @@ const sortTable = (field: string) => {
 }
 
 .action-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  color: #6b7280;
+  transition: all 0.2s;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 2rem;
   height: 2rem;
-  border: none;
-  border-radius: 0.375rem;
-  background-color: #f3f4f6;
-  color: #4b5563;
-  cursor: pointer;
-  transition: background-color 0.2s;
 }
 
 .action-button svg {
@@ -464,4 +479,9 @@ const sortTable = (field: string) => {
   color: #6b7280;
   font-style: italic;
 }
+
+.table-row:hover {
+  background-color: #f9fafb;
+}
+
 </style>

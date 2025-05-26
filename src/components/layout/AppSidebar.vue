@@ -114,7 +114,8 @@ const hasActiveChild = (children: SubMenuItem[]) => {
 const iconMap: Record<string, Component> = {
   home: IconHome,
   users: IconUsers,
-  signOut: IconSignOut
+  signOut: IconSignOut,
+  cube: IconCube
 }
 
 const menuItems: MenuItem[] = [
@@ -122,6 +123,11 @@ const menuItems: MenuItem[] = [
     title: "Clientes",
     icon: "users",
     route: "/clientes"
+  },
+  {
+    title: "Obras",
+    icon: "cube",
+    route: "/obras"
   },
   {
     title: "Usuários",

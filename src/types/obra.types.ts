@@ -1,9 +1,18 @@
 /**
+ * Interface para o cliente simplificado retornado dentro da obra
+ */
+export interface ClienteSimplificado {
+  id: number
+  nome: string
+}
+
+/**
  * Interface para a entidade Obra
  */
 export interface Obra {
   id: number
   cliente_id: number
+  cliente?: ClienteSimplificado
   nome: string
   descricao?: string
   endereco?: string
