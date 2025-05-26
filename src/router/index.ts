@@ -261,6 +261,72 @@ const router = createRouter({
             ],
             requiresAuth: true
           }
+        },
+        {
+          path: 'entrada-recursos',
+          name: 'entrada-recursos',
+          component: () => import('../views/entradaRecurso/EntradaRecursoView.vue'),
+          meta: {
+            title: 'Entrada de Recursos',
+            breadcrumb: [
+              { title: 'Home', path: '/' },
+              { title: 'Entrada de Recursos', path: '/entrada-recursos' }
+            ],
+            requiresAuth: true
+          }
+        },
+        {
+          path: 'entrada-recursos/novo/:obra_id?',
+          name: 'new-entrada-recurso',
+          component: () => import('../views/entradaRecurso/EntradaRecursoFormView.vue'),
+          props: route => ({ obraId: route.params.obra_id ? Number(route.params.obra_id) : null }),
+          meta: {
+            title: 'Nova Entrada de Recurso',
+            breadcrumb: [
+              { title: 'Home', path: '/' },
+              { title: 'Entrada de Recursos', path: '/entrada-recursos' },
+              { 
+                title: 'Obra',
+                dynamic: true,
+                getPath: (route: any) => route && route.params && route.params.obra_id ? `/obras/${route.params.obra_id}` : '#'
+              },
+              { title: 'Nova Entrada de Recurso' }
+            ],
+            requiresAuth: true
+          }
+        },
+        {
+          path: 'entrada-recursos/:id/editar',
+          name: 'edit-entrada-recurso',
+          component: () => import('../views/entradaRecurso/EntradaRecursoFormView.vue'),
+          meta: {
+            title: 'Editar Entrada de Recurso',
+            breadcrumb: [
+              { title: 'Home', path: '/' },
+              { title: 'Entrada de Recursos', path: '/entrada-recursos' },
+              {
+                title: 'Detalhes da Entrada de Recurso',
+                dynamic: true,
+                getPath: (route: any) => route && route.params ? `/entrada-recursos/${route.params.id}` : '#'
+              },
+              { title: 'Editar Entrada de Recurso' }
+            ],
+            requiresAuth: true
+          }
+        },
+        {
+          path: 'entrada-recursos/:id',
+          name: 'entrada-recurso-details',
+          component: () => import('../views/entradaRecurso/EntradaRecursoDetailsView.vue'),
+          meta: {
+            title: 'Detalhes da Entrada de Recurso',
+            breadcrumb: [
+              { title: 'Home', path: '/' },
+              { title: 'Entrada de Recursos', path: '/entrada-recursos' },
+              { title: 'Detalhes da Entrada de Recurso' }
+            ],
+            requiresAuth: true
+          }
         }
       ]
     },

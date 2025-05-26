@@ -115,7 +115,8 @@ const iconMap: Record<string, Component> = {
   home: IconHome,
   users: IconUsers,
   signOut: IconSignOut,
-  cube: IconCube
+  cube: IconCube,
+  money: IconCube // Usando IconCube como placeholder para money (pode ser substituído por um ícone mais adequado depois)
 }
 
 const menuItems: MenuItem[] = [
@@ -128,6 +129,11 @@ const menuItems: MenuItem[] = [
     title: "Obras",
     icon: "cube",
     route: "/obras"
+  },
+  {
+    title: "Entrada de Recursos",
+    icon: "money",
+    route: "/entrada-recursos"
   },
   {
     title: "Gastos",

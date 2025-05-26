@@ -23,6 +23,13 @@
         >
           Gastos
         </div>
+        <div 
+          class="tab" 
+          :class="{ active: activeTab === 'entradas-recursos' }"
+          @click="activeTab = 'entradas-recursos'"
+        >
+          Entradas de Recursos
+        </div>
       </div>
 
       <div class="tab-content">
@@ -71,6 +78,11 @@
         <div v-if="activeTab === 'gastos'" class="gastos-section">
           <GastosCrud :obraId="obra.id" />
         </div>
+        
+        <!-- Tab Entradas de Recursos -->
+        <div v-if="activeTab === 'entradas-recursos'" class="entradas-recursos-section">
+          <EntradaRecursoCrud :obraId="obra.id" />
+        </div>
       </div>
     </div>
     <div v-else class="empty-state">
@@ -90,7 +102,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useObrasStore } from '@/stores/obrasStore'
 import type { Obra } from '@/types/obra.types'
@@ -103,6 +115,7 @@ import { useNotificationStore } from '@/stores/notificationStore'
 import { formatDate, formatCurrency } from '@/utils/formatters'
 import { useBreadcrumbStore } from '@/stores/breadcrumbStore'
 import GastosCrud from '@/components/gastos/GastosCrud.vue'
+import EntradaRecursoCrud from '@/components/entradaRecurso/EntradaRecursoCrud.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -116,10 +129,19 @@ const error = ref<string | null>(null)
 const showDeleteConfirm = ref(false)
 const activeTab = ref('dados-gerais')
 
+// Observar mudanças no parâmetro active_tab da URL
+watch(() => route.query.active_tab, (tab) => {
+  if (tab === 'entradas-recursos') activeTab.value = 'entradas-recursos'
+  else if (tab === 'gastos') activeTab.value = 'gastos'
+  else if (tab) activeTab.value = tab as string
+})
+
 onMounted(async () => {
   // Verificar se há uma aba ativa na query string
   const tabFromQuery = route.query.active_tab as string;
-  if (tabFromQuery) {
+  if (tabFromQuery === 'entradas-recursos') {
+    activeTab.value = 'entradas-recursos';
+  } else if (tabFromQuery) {
     activeTab.value = tabFromQuery;
   }
   
@@ -333,6 +355,11 @@ const handleDelete = async () => {
   padding: $spacing-lg;
   border-radius: $border-radius-sm;
   // box-shadow: $shadow-xs; 
+}
+
+.gastos-section,
+.entradas-recursos-section {
+  padding: $spacing-sm 0;
 }
 
 .section-title {
