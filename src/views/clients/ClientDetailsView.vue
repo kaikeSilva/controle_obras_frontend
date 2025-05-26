@@ -32,6 +32,13 @@
         >
           Obras
         </div>
+        <div 
+          class="tab" 
+          :class="{ active: activeTab === 'categorias-gastos' }"
+          @click="activeTab = 'categorias-gastos'"
+        >
+          Categoria de Gastos
+        </div>
       </div>
 
       <div class="tab-content">
@@ -92,6 +99,11 @@
         <div v-if="activeTab === 'obras'" class="obras-section">
           <ObrasCrud :clienteId="client.id" />
         </div>
+        
+        <!-- Tab Categorias de Gastos -->
+        <div v-if="activeTab === 'categorias-gastos'" class="categorias-gastos-section">
+          <CategoriasGastosCrud :clienteId="client.id" />
+        </div>
       </div>
     </div>
     <div v-else class="empty-state">
@@ -124,6 +136,7 @@ import ConfirmationModal from '@/components/common/ConfirmationModal.vue'
 import { useNotificationStore } from '@/stores/notificationStore'
 import FontesPagadorasCrud from '@/components/fontesPagadoras/FontesPagadorasCrud.vue'
 import ObrasCrud from '@/components/obras/ObrasCrud.vue'
+import CategoriasGastosCrud from '@/components/categoriasGastos/CategoriasGastosCrud.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -381,7 +394,8 @@ const formatDate = (dateString: string): string => {
 }
 
 .fontes-pagadoras-section,
-.obras-section {
+.obras-section,
+.categorias-gastos-section {
   padding: $spacing-sm 0;
 }
 

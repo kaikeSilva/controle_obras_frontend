@@ -6,6 +6,7 @@ import { createPinia } from 'pinia'; // Import Pinia
 
 import App from './App.vue';
 import router from './router';
+import vSelectPlugin from './plugins/vue-select'; // Import vue-select plugin
 
 // Import WebSocket related services and configurations
 import { WebSocketService } from './services/websocket/WebSocketService';
@@ -21,8 +22,8 @@ const app = createApp(App);
 // Initialize Pinia
 const pinia = createPinia();
 app.use(pinia);
-
 app.use(router);
+app.use(vSelectPlugin); // Register vue-select component globally
 
 // Setup API interceptors for authentication
 setupInterceptors();

@@ -1,204 +1,255 @@
-# Passo a Passo: Implementação de View Base para Obras
+# 📋 Guia de Implementação - [Entidade]Crud.vue
 
-## Análise dos Arquivos Existentes
+## Visão Geral
+Este guia fornece um passo a passo completo para implementar qualquer componente CRUD no sistema, baseado na análise do `ObrasCrud.vue` e suas integrações.
 
-Após analisar o sistema, identifiquei que você já possui:
+## **FASE 1: PREPARAÇÃO DA INFRAESTRUTURA**
 
-### Arquivos CRUD de Obras Existentes (Para Reutilização):
-- `src/components/obras/ObrasFilter.vue` - Filtros para obras
-- `src/components/obras/ObrasTable.vue` - Tabela/Cards responsivos
-- `src/stores/obrasStore.ts` - Store Pinia para obras
-- `src/services/obrasService.ts` - Serviços de API
-- `src/types/obra.types.ts` - Tipos TypeScript
+### **1.1 Criar Tipos TypeScript**
+- [ ] Definir interface da entidade principal (`[Entidade]`)
+- [ ] Definir interface do formulário (`[Entidade]Form`)
+- [ ] Definir interface de filtros (`[Entidade]Filter`)
+- [ ] Definir tipos de paginação (`PaginatedResponse`, `PaginationLinks`, `PaginationMeta`)
+- [ ] Criar arquivo `src/types/[entidade].types.ts`
 
-### Views Existentes de Obras:
-- `src/views/obras/ObraFormView.vue` - Formulário de obra
-- `src/views/obras/ObraDetailsView.vue` - Detalhes da obra
+### **1.2 Implementar Service**
+- [ ] Criar `src/services/[entidade]Service.ts`
+- [ ] Implementar método `get[Entidades]()` com suporte a paginação e filtros
+- [ ] Implementar método `get[Entidade]ById(id: number)`
+- [ ] Implementar método `create[Entidade](data: Partial<[Entidade]>)`
+- [ ] Implementar método `update[Entidade](id: number, data: Partial<[Entidade]>)`
+- [ ] Implementar método `delete[Entidade](id: number)`
+- [ ] Definir interface de parâmetros para busca com filtros e paginação
+- [ ] Implementar tratamento de erros consistente
 
-### Padrão a Seguir:
-- `src/views/clients/ClientsView.vue` - Template base para estrutura
-- `src/components/clients/ClientsFilter.vue` - Referência para filtros
-- `src/components/clients/ClientsTable.vue` - Referência para tabela
-- `src/components/clients/ClientsCards.vue` - Referência para cards
+### **1.3 Implementar Store Pinia**
+- [ ] Criar `src/stores/[entidade]Store.ts`
+- [ ] Implementar estado reativo (entidades, loading, error, pagination, filtros, ordenação)
+- [ ] Implementar getters computados
+- [ ] Implementar actions para todas as operações CRUD
+- [ ] Implementar gerenciamento de filtros e ordenação
+- [ ] Implementar limpeza de erros
 
-## Passo a Passo para Implementar View Base de Obras
+---
 
-### 1. Criar a View Principal de Obras
+## **FASE 2: COMPONENTES DE INTERFACE**
 
-**Arquivo a criar:** `src/views/obras/ObrasView.vue`
+### **2.1 Criar Componente de Filtro**
+- [ ] Implementar `src/components/[entidades]/[Entidades]Filter.vue`
+- [ ] Criar campo de busca geral
+- [ ] Implementar filtros avançados colapsáveis
+- [ ] Implementar botões de aplicar e limpar filtros
+- [ ] Implementar botão de adicionar nova entidade
+- [ ] Tornar responsivo para mobile
+- [ ] Emitir eventos: `filter`, `clear`, `add-[entidade]`
 
-**Atividades:**
-- Usar `ClientsView.vue` como template base
-- Implementar mesma estrutura: filter-section, loading, error, empty-state
-- Chamar `ObrasFilter`, `ObrasTable` e `ObrasCards` diretamente
-- Implementar handlers para paginação, filtros e ordenação
-- Usar `useObrasStore` para gerenciamento de estado
-- Configurar navegação para formulário, detalhes e edição
+### **2.2 Criar Componente de Tabela**
+- [ ] Implementar `src/components/[entidades]/[Entidades]Table.vue`
+- [ ] Implementar cabeçalhos ordenáveis com ícones de direção
+- [ ] Implementar componente de paginação integrado
+- [ ] Implementar menu de ações (visualizar, editar, excluir)
+- [ ] Implementar controle de menu dropdown com clique fora
+- [ ] Tornar visível apenas em desktop (min-width: 768px)
+- [ ] Implementar formatação de dados (datas, moeda, status)
 
-### 2. Atualizar o Sistema de Roteamento
+### **2.3 Criar Componente de Cards**
+- [ ] Implementar `src/components/[entidades]/[Entidades]Cards.vue`
+- [ ] Criar visualização em cards para mobile
+- [ ] Implementar mesmo menu de ações da tabela
+- [ ] Implementar paginação
+- [ ] Tornar visível apenas em mobile (max-width: 767px)
+- [ ] Implementar layout responsivo para cards
 
-**Arquivo a modificar:** `src/router/index.ts`
+## **FASE 3: COMPONENTE CRUD PRINCIPAL**
 
-**Atividades:**
-- Adicionar rota para `/obras` apontando para `ObrasView.vue`
-- Configurar meta informações (título, breadcrumb)
-- Definir parâmetros de autenticação necessários
-- Configurar rotas aninhadas se necessário
+### **3.1 Estrutura Base do CRUD**
+- [ ] Criar `src/components/[entidades]/[Entidades]Crud.vue`
+- [ ] Implementar props necessárias (ex: clienteId para entidades filhas)
+- [ ] Importar e configurar store da entidade
+- [ ] Importar todos os componentes necessários
+- [ ] Configurar refs e estado local
 
-### 3. Criar Cards Component para Mobile
+### **3.2 Implementar Estados de Interface**
+- [ ] Implementar estado de loading com `LoadingSpinner`
+- [ ] Implementar estado de erro com `ErrorMessage` e retry
+- [ ] Implementar estado vazio quando não há dados
+- [ ] Implementar container principal quando há dados
+- [ ] Implementar transições suaves entre estados
 
-**Arquivo a criar:** `src/components/obras/ObrasCards.vue`
+### **3.3 Implementar Integração com Componentes**
+- [ ] Conectar `[Entidades]Filter` com handlers de filtro
+- [ ] Conectar `[Entidades]Table` com handlers de paginação e ordenação
+- [ ] Conectar `[Entidades]Cards` com mesmos handlers
+- [ ] Implementar handler para adicionar nova entidade
+- [ ] Sincronizar estado entre tabela e cards
 
-**Atividades:**
-- Usar `ClientsCards.vue` como template base
-- Adaptar para mostrar dados específicos de obras (nome, cliente, status, valor)
-- Implementar menu de ações (visualizar, editar, excluir)
-- Incluir modal de confirmação de exclusão
-- Configurar paginação responsiva
-- Adicionar informações do cliente em cada card
+### **3.4 Implementar Operações CRUD**
+- [ ] Implementar `load[Entidades]()` com suporte a filtros
+- [ ] Implementar `handlePageChange(page: number)`
+- [ ] Implementar `handlePerPageChange(perPage: number)`
+- [ ] Implementar `handleFilter(filters: Record<string, string>)`
+- [ ] Implementar `handleClearFilters()`
+- [ ] Implementar `handleSort(field: string)`
+- [ ] Implementar operações de criar, editar e excluir
 
-### 4. Atualizar a Sidebar de Navegação
+---
 
-**Arquivo a modificar:** `src/components/layout/AppSidebar.vue`
+## **FASE 4: INTEGRAÇÃO COM SISTEMA**
 
-**Atividades:**
-- Adicionar item de menu "Obras" na lista `menuItems`
-- Configurar ícone apropriado para obras (sugestão: IconCube ou novo ícone)
-- Definir rota de navegação `/obras`
-- Ajustar ordem dos itens de menu conforme necessário
+### **4.1 Configurar Rotas**
+- [ ] Adicionar rotas no `src/router/index.ts`
+- [ ] Configurar rota para listagem (`/[entidades]`)
+- [ ] Configurar rota para criação (`/[entidades]/novo`)
+- [ ] Configurar rota para edição (`/[entidades]/:id/editar`)
+- [ ] Configurar rota para detalhes (`/[entidades]/:id`)
+- [ ] Implementar breadcrumbs com meta apropriada
+- [ ] Configurar parâmetros de rota e validação
 
-### 5. Adaptar ObrasFilter para Contexto Geral
+### **4.2 Criar Views**
+- [ ] Implementar `src/views/[entidades]/[Entidades]View.vue` para listagem
+- [ ] Implementar `src/views/[entidades]/[Entidade]FormView.vue` para formulário
+- [ ] Implementar `src/views/[entidades]/[Entidade]DetailsView.vue` para detalhes
+- [ ] Configurar layout consistente com o sistema
+- [ ] Implementar navegação entre views
 
-**Arquivo a modificar:** `src/components/obras/ObrasFilter.vue`
+### **4.3 Implementar Notificações**
+- [ ] Integrar `useNotificationStore` em todas as operações
+- [ ] Implementar mensagens de sucesso para criar/editar/excluir
+- [ ] Implementar mensagens de erro com tratamento apropriado
+- [ ] Configurar durações e tipos de notificação consistentes
+- [ ] Implementar feedback visual durante operações
 
-**Atividades:**
-- Seguir estrutura do `ClientsFilter.vue`
-- Adicionar filtro por cliente (dropdown/autocomplete) nos filtros avançados
-- Manter filtros existentes (status, data início, prazo estimado, etc.)
-- Implementar botão "Adicionar Obra" seguindo padrão dos clientes
-- Ajustar layout para incluir busca geral e filtros avançados
-- Garantir responsividade para mobile
+### **4.4 Configurar Navegação**
+- [ ] Implementar navegação entre listagem e formulários
+- [ ] Configurar redirecionamentos após operações CRUD
+- [ ] Implementar breadcrumbs contextuais
+- [ ] Configurar botões de ação no sidebar (se aplicável)
+- [ ] Implementar navegação de volta consistente
 
-### 6. Atualizar ObrasTable para Mostrar Cliente
+---
 
-**Arquivo a modificar:** `src/components/obras/ObrasTable.vue`
+## **FASE 5: REFINAMENTOS E RESPONSIVIDADE**
 
-**Atividades:**
-- Seguir estrutura do `ClientsTable.vue`
-- Adicionar coluna "Cliente" na tabela desktop
-- Remover visualização de cards mobile (será responsabilidade do ObrasCards)
-- Implementar ordenação por cliente
-- Manter funcionalidades existentes de ações
-- Incluir modal de confirmação de exclusão
-- Ajustar larguras das colunas para incluir cliente
+### **5.1 Implementar Responsividade**
+- [ ] Garantir que tabela só apareça em desktop (≥768px)
+- [ ] Garantir que cards só apareçam em mobile (<768px)
+- [ ] Implementar breakpoints apropriados para todos os componentes
+- [ ] Testar comportamento em diferentes tamanhos de tela
+- [ ] Implementar navegação mobile-friendly
 
-### 7. Modificar ObrasStore para Contexto Geral
+### **5.2 Implementar Formatação de Dados**
+- [ ] Implementar formatadores para datas usando `formatDate()`
+- [ ] Implementar formatadores para moeda usando `formatCurrency()`
+- [ ] Implementar badges de status com cores apropriadas
+- [ ] Implementar formatação de campos específicos da entidade
+- [ ] Implementar truncamento de texto longo
 
-**Arquivo a modificar:** `src/stores/obrasStore.ts`
+### **5.3 Implementar Validações**
+- [ ] Implementar validação no frontend para formulários
+- [ ] Implementar feedback visual para campos inválidos
+- [ ] Implementar mensagens de erro específicas por campo
+- [ ] Implementar validação de relacionamentos (se aplicável)
+- [ ] Implementar validação de dados antes de envio
 
-**Atividades:**
-- Seguir estrutura do `clientsStore.ts`
-- Ajustar `fetchObras` para funcionar sem `clienteId` obrigatório
-- Manter compatibilidade com uso atual (filtragem por cliente opcional)
-- Implementar mesmos padrões de state management (activeFilters, sortBy, sortDirection)
-- Ajustar getters para retornar dados de paginação consistentes
-- Manter métodos de clearFilters e clearError
+### **5.4 Testes e Polimento**
+- [ ] Testar todas as operações CRUD (criar, ler, atualizar, excluir)
+- [ ] Testar filtros e paginação em diferentes cenários
+- [ ] Testar responsividade em dispositivos móveis e desktop
+- [ ] Testar tratamento de erros e conexão perdida
+- [ ] Implementar loading states apropriados para todas as operações
+- [ ] Verificar acessibilidade básica (labels, aria-labels)
+- [ ] Testar navegação por teclado
 
-### 8. Adaptar ObraFormView para Contexto Geral
+---
 
-**Arquivo a modificar:** `src/views/obras/ObraFormView.vue`
+## **PADRÕES E CONVENÇÕES**
 
-**Atividades:**
-- Adicionar seleção de cliente quando não vier por parâmetro (usar AutocompleteSelect)
-- Implementar lógica para determinar origem da navegação
-- Ajustar validações para incluir cliente obrigatório quando necessário
-- Modificar navegação de retorno baseada no contexto (geral vs. cliente específico)
-- Manter compatibilidade com uso atual via ClientDetailsView
+### **Nomenclatura**
+- **Componentes**: PascalCase (`ClientesCrud.vue`, `ClientesTable.vue`)
+- **Métodos**: camelCase (`handlePageChange`, `loadClientes`)
+- **Arquivos**: kebab-case para pastas, PascalCase para componentes
+- **Props/Events**: camelCase (`clienteId`, `@page-change`)
 
-### 9. Atualizar ObraDetailsView para Navegação Geral
+### **Estrutura de Arquivos**
+```
+src/
+├── components/
+│   └── [entidades]/
+│       ├── [Entidades]Crud.vue
+│       ├── [Entidades]Filter.vue
+│       ├── [Entidades]Table.vue
+│       ├── [Entidades]Cards.vue
+├── services/
+│   └── [entidade]Service.ts
+├── stores/
+│   └── [entidade]Store.ts
+├── types/
+│   └── [entidade].types.ts
+└── views/
+    └── [entidades]/
+        ├── [Entidades]View.vue
+        ├── [Entidade]FormView.vue
+        └── [Entidade]DetailsView.vue
+```
 
-**Arquivo a modificar:** `src/views/obras/ObraDetailsView.vue`
+### **Estilos e Design**
+- [ ] Usar SCSS com variáveis do sistema (`$primary-color`, `$spacing-md`, etc.)
+- [ ] Implementar hover states e transições suaves
+- [ ] Usar box-shadow e border-radius consistentes
+- [ ] Implementar estados de focus para acessibilidade
+- [ ] Usar cores semânticas para ações (verde para sucesso, vermelho para exclusão)
 
-**Atividades:**
-- Ajustar breadcrumb para funcionar em contexto geral de obras
-- Modificar navegação de volta (usar breadcrumbStore para determinar origem)
-- Adicionar informação/link do cliente na seção de dados gerais
-- Manter funcionalidades existentes de edição/exclusão
-- Implementar redirecionamento inteligente após exclusão
+### **Estados e Feedback**
+- [ ] Sempre implementar loading, error e empty states
+- [ ] Implementar skeleton loading quando apropriado
+- [ ] Usar spinners consistentes com o sistema
+- [ ] Implementar feedback imediato para ações do usuário
+- [ ] Implementar confirmações para ações destrutivas
 
-### 10. Atualizar Breadcrumb Store
+### **Performance**
+- [ ] Implementar paginação para grandes conjuntos de dados
+- [ ] Implementar debounce em campos de busca
+- [ ] Usar lazy loading quando apropriado
+- [ ] Minimizar re-renders desnecessários
+- [ ] Implementar cache local quando apropriado
 
-**Arquivo a modificar:** `src/stores/breadcrumbStore.ts`
+### **Acessibilidade**
+- [ ] Usar labels apropriados para todos os inputs
+- [ ] Implementar aria-labels para botões de ação
+- [ ] Garantir navegação por teclado funcional
+- [ ] Usar estrutura semântica adequada (headings, nav, main)
+- [ ] Implementar contraste de cores adequado
 
-**Atividades:**
-- Adicionar propriedade para contexto de origem (cliente vs. geral)
-- Implementar métodos para definir contexto de navegação
-- Manter compatibilidade com uso atual
-- Adicionar lógica para breadcrumb de obras gerais
+---
 
-### 11. Configurar AutoComplete de Clientes
+## **CHECKLIST FINAL**
 
-**Atividades:**
-- Verificar se `autocompleteService.ts` possui método para clientes
-- Se não existir, adicionar método `getClientes()` no serviço
-- Atualizar `autocompleteStore.ts` para incluir opções de clientes
-- Implementar seleção de cliente nos filtros e formulários usando AutocompleteSelect existente
+### **Funcionalidades Essenciais**
+- [ ] ✅ CRUD completo (Create, Read, Update, Delete)
+- [ ] ✅ Paginação funcional
+- [ ] ✅ Filtros e busca
+- [ ] ✅ Ordenação por colunas
+- [ ] ✅ Responsividade (mobile + desktop)
+- [ ] ✅ Estados de loading e erro
+- [ ] ✅ Notificações de feedback
+- [ ] ✅ Modais de confirmação
 
-### 12. Ajustar Tipos TypeScript
+### **Integração com Sistema**
+- [ ] ✅ Rotas configuradas
+- [ ] ✅ Breadcrumbs funcionais
+- [ ] ✅ Store Pinia integrado
+- [ ] ✅ Serviços API funcionais
+- [ ] ✅ Tipos TypeScript definidos
+- [ ] ✅ Navegação consistente
 
-**Arquivo a verificar:** `src/types/obra.types.ts`
+### **Qualidade e Manutenibilidade**
+- [ ] ✅ Código limpo e bem estruturado
+- [ ] ✅ Comentários em pontos complexos
+- [ ] ✅ Tratamento de erros robusto
+- [ ] ✅ Performance otimizada
+- [ ] ✅ Acessibilidade básica
+- [ ] ✅ Testes manuais realizados
 
-**Atividades:**
-- Verificar se tipos existentes incluem dados do cliente nas obras
-- Adicionar interface para cliente relacionado se necessário
-- Manter compatibilidade com código existente
-- Adicionar tipos para filtros que incluem cliente se necessário
+---
 
-### 13. Testes e Validação
-
-**Atividades:**
-- Testar view de obras independente (`/obras`)
-- Verificar que funcionalidade em `ClientDetailsView` não foi quebrada
-- Validar navegação entre diferentes contextos (geral → cliente → obra)
-- Testar responsividade (ObrasTable desktop, ObrasCards mobile)
-- Verificar filtros, paginação e ordenação
-- Validar criação/edição/exclusão de obras em ambos contextos
-
-## Considerações Importantes
-
-### Padrão de Componentes
-- Seguir exatamente o padrão do ClientsView: Filter, Table, Cards como componentes separados
-- Não reutilizar ObrasCrud.vue - implementar chamadas diretas na view
-- Manter separação de responsabilidades entre componentes
-
-### Responsive Design
-- ObrasTable: apenas para desktop (display: none no mobile)
-- ObrasCards: apenas para mobile (display: none no desktop)
-- Mesma estratégia usada em ClientsView
-
-### Estado e Navegação
-- Usar storeToRefs para reatividade do estado
-- Implementar handlers na view principal para todas as ações
-- Gerenciar contexto de navegação via breadcrumbStore
-
-### Compatibilidade
-- Manter funcionamento atual do ObrasTable dentro do ClientDetailsView
-- Adaptar componentes para funcionar em ambos contextos
-- Preservar todas as funcionalidades existentes
-
-## Ordem de Implementação Recomendada
-
-1. **ObrasView.vue** - View principal seguindo padrão do ClientsView
-2. **ObrasCards.vue** - Componente de cards para mobile
-3. **Router** - Configuração de rotas
-4. **Sidebar** - Adicionar menu de obras
-5. **ObrasFilter** - Adaptações para contexto geral + botão adicionar
-6. **ObrasTable** - Coluna de cliente + remover responsividade mobile
-7. **ObrasStore** - Suporte a contexto geral seguindo padrão clientsStore
-8. **AutoComplete** - Seleção de clientes se necessário
-9. **ObraFormView** - Seleção de cliente quando necessário
-10. **Breadcrumb** - Sistema de contexto de navegação
-11. **ObraDetailsView** - Navegação contextual
-12. **Testes** - Validação completa de ambos contextos
-
-Seguindo este passo a passo, você terá uma view base de obras que segue exatamente o padrão estabelecido pelo ClientsView, com componentes separados e responsabilidades bem definidas.
+**💡 Dica**: Use este guia como checklist durante a implementação. Cada item deve ser completado e testado antes de prosseguir para o próximo. A ordem das fases é importante para manter a consistência e evitar retrabalho.

@@ -35,6 +35,18 @@ const router = createRouter({
           }
         },
         {
+          path: 'categorias-gastos',
+          name: 'categorias-gastos',
+          component: () => import('../views/categoriasGastos/CategoriasGastosView.vue'),
+          meta: {
+            title: 'Categorias de Gastos',
+            breadcrumb: [
+              { title: 'Home', path: '/' },
+              { title: 'Categorias de Gastos', path: '/categorias-gastos' }
+            ]
+          }
+        },
+        {
           path: 'obras/novo/:cliente_id?',
           name: 'new-obra',
           component: () => import('../views/obras/ObraFormView.vue'),
@@ -90,6 +102,43 @@ const router = createRouter({
                 getPath: (params, store) => `/clientes/${store.currentClienteId}?active_tab=obras`
               },
               { title: 'Detalhes da Obra' } 
+            ],
+            requiresAuth: true
+          }
+        },
+        {
+          path: 'categorias-gastos/novo/:cliente_id?',
+          name: 'new-categoria-gasto',
+          component: () => import('@/views/categoriasGastos/CategoriaGastoFormView.vue'),
+          props: route => ({ clienteId: route.params.cliente_id ? Number(route.params.cliente_id) : null }),
+          meta: {
+            title: 'Nova Categoria de Gasto',
+            breadcrumb: [
+              { title: 'Home', path: '/' },
+              { title: 'Clientes', path: '/clientes' },
+              {
+                title: 'Detalhes do Cliente',
+                dynamic: true,
+                getPath: (route: any) => `/clientes/${route.params.cliente_id}`
+              },
+              { title: 'Nova Categoria de Gasto' }
+            ]
+          }
+        },
+        {
+          path: 'categorias-gastos/:id/editar',
+          name: 'edit-categoria-gasto',
+          component: () => import('@/views/categoriasGastos/CategoriaGastoFormView.vue'),
+          meta: {
+            title: 'Editar Categoria de Gasto',
+            breadcrumb: [
+              { title: 'Home', path: '/' },
+              { 
+                title: 'Detalhes do Cliente', 
+                dynamic: true, 
+                getPath: (params, store) => `/clientes/${store.currentClienteId}?active_tab=categoria-gasto`
+              },
+              { title: 'Editar Categoria de Gasto' }
             ],
             requiresAuth: true
           }

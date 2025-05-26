@@ -1,6 +1,15 @@
 import type { Client, PaginatedResponse } from '@/types/client.types'
 import api from './api'
 
+export interface Cliente {
+  id: number
+  nome: string
+}
+
+export interface ClientesResponse {
+  data: Cliente[]
+}
+
 interface GetClientsParams {
   page?: number;
   per_page?: number;
@@ -74,12 +83,28 @@ export const clientsService = {
   
   async deleteClient(id: number): Promise<void> {
     try {
-      console.log(`Deleting client with ID ${id}`)
+      console.log(`Deleting client with ID: ${id}`)
       await api.delete(`/clients/${id}`)
-      console.log(`Client with ID ${id} deleted successfully`)
+      
+      console.log('Client deleted successfully')
     } catch (error) {
       console.error(`Error deleting client with ID ${id}:`, error)
       throw error
+    }
+  },
+  
+  /**
+   * Busca clientes para autocomplete
+   */
+  async getClientesAutocomplete(): Promise<Cliente[]> {
+    try {
+      console.log('Chamando API endpoint: /autocomplete/clientes')
+      const response = await api.get<ClientesResponse>('/autocomplete/clientes')
+      console.log('Resposta da API de autocomplete:', response)
+      return response.data.data || []
+    } catch (error) {
+      console.error('Erro ao buscar clientes para autocomplete:', error)
+      return []
     }
   }
 }

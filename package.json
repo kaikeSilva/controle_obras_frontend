@@ -19,6 +19,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@vueform/multiselect": "^2.6.11",
     "axios": "^1.9.0",
     "laravel-echo": "^2.1.4",
     "pinia": "^3.0.2",

@@ -130,6 +130,11 @@ const menuItems: MenuItem[] = [
     route: "/obras"
   },
   {
+    title: "Categorias de Gastos",
+    icon: "cube",
+    route: "/categorias-gastos"
+  },
+  {
     title: "Usuários",
     icon: "users",
     route: "/usuarios"
