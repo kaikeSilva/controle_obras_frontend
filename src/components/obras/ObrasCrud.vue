@@ -54,7 +54,7 @@
           :sort-by="sortBy" 
           :sort-direction="sortDirection" 
           :is-mobile="isMobile"
-          @edit="openEditModal" 
+          @edit="openEditPage" 
           @delete="confirmDelete" 
           @sort="handleSort"
           @view="viewObra"
@@ -103,7 +103,6 @@ import { useObrasStore } from '@/stores/obrasStore'
 import type { Obra, ObraForm } from '@/types/obra.types'
 import ObrasFilter from './ObrasFilter.vue'
 import ObrasTable from './ObrasTable.vue'
-import ObraModal from './ObraModal.vue'
 import Pagination from '@/components/common/Pagination.vue'
 
 // Props
@@ -175,45 +174,14 @@ const handlePerPageChange = (perPage: number) => {
   loadObras()
 }
 
-const openCreateModal = () => {
-  selectedObra.value = null
-  showModal.value = true
-}
-
 import { useRouter } from 'vue-router'
 const router = useRouter()
-const openEditModal = (obra: Obra) => {
+const openEditPage = (obra: Obra) => {
   router.push({ name: 'edit-obra', params: { id: obra.id } })
 }
 
 const viewObra = (obra: Obra) => {
   router.push({ name: 'obra-details', params: { id: obra.id } })
-}
-
-const closeModal = () => {
-  showModal.value = false
-  selectedObra.value = null
-}
-
-const saveObra = async (form: ObraForm) => {
-  formSubmitting.value = true
-  
-  try {
-    if (selectedObra.value) {
-      // Editar obra existente
-      await obrasStore.updateObra(selectedObra.value.id, form)
-    } else {
-      // Criar nova obra
-      await obrasStore.createObra(form)
-    }
-    
-    closeModal()
-    loadObras() // Recarregar a lista
-  } catch (error) {
-    console.error('Erro ao salvar obra:', error)
-  } finally {
-    formSubmitting.value = false
-  }
 }
 
 const confirmDelete = (obra: Obra) => {

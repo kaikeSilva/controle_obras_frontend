@@ -5,14 +5,20 @@ Este guia fornece um passo a passo completo para implementar qualquer componente
 
 ## **FASE 1: PREPARAÇÃO DA INFRAESTRUTURA**
 
-### **1.1 Criar Tipos TypeScript**
+### **1.1 Criar Tipos TypeScript** 
+Ver exemplo na entidade de obras nos arquivos abaixo:
+- src/types/obra.types.ts
+checklist:
+- [ ] Criar arquivo `src/types/[entidade].types.ts`
 - [ ] Definir interface da entidade principal (`[Entidade]`)
 - [ ] Definir interface do formulário (`[Entidade]Form`)
 - [ ] Definir interface de filtros (`[Entidade]Filter`)
 - [ ] Definir tipos de paginação (`PaginatedResponse`, `PaginationLinks`, `PaginationMeta`)
-- [ ] Criar arquivo `src/types/[entidade].types.ts`
 
 ### **1.2 Implementar Service**
+Ver exemplo na entidade de obras nos arquivos abaixo:
+- src/services/obrasService.ts
+checklist:
 - [ ] Criar `src/services/[entidade]Service.ts`
 - [ ] Implementar método `get[Entidades]()` com suporte a paginação e filtros
 - [ ] Implementar método `get[Entidade]ById(id: number)`
@@ -23,6 +29,9 @@ Este guia fornece um passo a passo completo para implementar qualquer componente
 - [ ] Implementar tratamento de erros consistente
 
 ### **1.3 Implementar Store Pinia**
+Ver exemplo na entidade de obras nos arquivos abaixo:
+- src/stores/obrasStore.ts
+checklist:
 - [ ] Criar `src/stores/[entidade]Store.ts`
 - [ ] Implementar estado reativo (entidades, loading, error, pagination, filtros, ordenação)
 - [ ] Implementar getters computados
@@ -35,6 +44,9 @@ Este guia fornece um passo a passo completo para implementar qualquer componente
 ## **FASE 2: COMPONENTES DE INTERFACE**
 
 ### **2.1 Criar Componente de Filtro**
+Ver exemplo na entidade de obras nos arquivos abaixo:
+- src/components/obras/ObrasFilter.vue
+checklist:
 - [ ] Implementar `src/components/[entidades]/[Entidades]Filter.vue`
 - [ ] Criar campo de busca geral
 - [ ] Implementar filtros avançados colapsáveis
@@ -44,6 +56,9 @@ Este guia fornece um passo a passo completo para implementar qualquer componente
 - [ ] Emitir eventos: `filter`, `clear`, `add-[entidade]`
 
 ### **2.2 Criar Componente de Tabela**
+Ver exemplo na entidade de obras nos arquivos abaixo:
+- src/components/obras/ObrasTable.vue
+checklist:
 - [ ] Implementar `src/components/[entidades]/[Entidades]Table.vue`
 - [ ] Implementar cabeçalhos ordenáveis com ícones de direção
 - [ ] Implementar componente de paginação integrado
@@ -53,6 +68,9 @@ Este guia fornece um passo a passo completo para implementar qualquer componente
 - [ ] Implementar formatação de dados (datas, moeda, status)
 
 ### **2.3 Criar Componente de Cards**
+Ver exemplo na entidade de obras nos arquivos abaixo:
+- src/components/obras/ObrasCards.vue
+checklist:
 - [ ] Implementar `src/components/[entidades]/[Entidades]Cards.vue`
 - [ ] Criar visualização em cards para mobile
 - [ ] Implementar mesmo menu de ações da tabela
@@ -61,7 +79,9 @@ Este guia fornece um passo a passo completo para implementar qualquer componente
 - [ ] Implementar layout responsivo para cards
 
 ## **FASE 3: COMPONENTE CRUD PRINCIPAL**
-
+Ver exemplo na entidade de obras nos arquivos abaixo:
+- src/components/obras/ObrasCrud.vue
+checklist:
 ### **3.1 Estrutura Base do CRUD**
 - [ ] Criar `src/components/[entidades]/[Entidades]Crud.vue`
 - [ ] Implementar props necessárias (ex: clienteId para entidades filhas)
@@ -70,6 +90,9 @@ Este guia fornece um passo a passo completo para implementar qualquer componente
 - [ ] Configurar refs e estado local
 
 ### **3.2 Implementar Estados de Interface**
+Ver exemplo na entidade de obras nos arquivos abaixo:
+- src/components/obras/ObrasCrud.vue
+checklist:
 - [ ] Implementar estado de loading com `LoadingSpinner`
 - [ ] Implementar estado de erro com `ErrorMessage` e retry
 - [ ] Implementar estado vazio quando não há dados
@@ -77,6 +100,9 @@ Este guia fornece um passo a passo completo para implementar qualquer componente
 - [ ] Implementar transições suaves entre estados
 
 ### **3.3 Implementar Integração com Componentes**
+Ver exemplo na entidade de obras nos arquivos abaixo:
+- src/components/obras/ObrasCrud.vue
+checklist:
 - [ ] Conectar `[Entidades]Filter` com handlers de filtro
 - [ ] Conectar `[Entidades]Table` com handlers de paginação e ordenação
 - [ ] Conectar `[Entidades]Cards` com mesmos handlers
@@ -84,6 +110,9 @@ Este guia fornece um passo a passo completo para implementar qualquer componente
 - [ ] Sincronizar estado entre tabela e cards
 
 ### **3.4 Implementar Operações CRUD**
+Ver exemplo na entidade de obras nos arquivos abaixo:
+- src/components/obras/ObrasCrud.vue
+checklist:
 - [ ] Implementar `load[Entidades]()` com suporte a filtros
 - [ ] Implementar `handlePageChange(page: number)`
 - [ ] Implementar `handlePerPageChange(perPage: number)`
@@ -97,6 +126,9 @@ Este guia fornece um passo a passo completo para implementar qualquer componente
 ## **FASE 4: INTEGRAÇÃO COM SISTEMA**
 
 ### **4.1 Configurar Rotas**
+Ver exemplo na entidade de obras nos arquivos abaixo:
+- src/router/index.ts
+checklist:
 - [ ] Adicionar rotas no `src/router/index.ts`
 - [ ] Configurar rota para listagem (`/[entidades]`)
 - [ ] Configurar rota para criação (`/[entidades]/novo`)
@@ -106,6 +138,11 @@ Este guia fornece um passo a passo completo para implementar qualquer componente
 - [ ] Configurar parâmetros de rota e validação
 
 ### **4.2 Criar Views**
+Ver exemplo na entidade de obras nos arquivos abaixo:
+- src/views/obras/ObrasView.vue
+- src/views/obras/ObrasFormView.vue
+- src/views/obras/ObrasDetailsView.vue
+checklist:
 - [ ] Implementar `src/views/[entidades]/[Entidades]View.vue` para listagem
 - [ ] Implementar `src/views/[entidades]/[Entidade]FormView.vue` para formulário
 - [ ] Implementar `src/views/[entidades]/[Entidade]DetailsView.vue` para detalhes
@@ -113,6 +150,9 @@ Este guia fornece um passo a passo completo para implementar qualquer componente
 - [ ] Implementar navegação entre views
 
 ### **4.3 Implementar Notificações**
+Ver exemplo na entidade de obras nos arquivos abaixo:
+- src/views/obras/ObrasView.vue
+checklist:
 - [ ] Integrar `useNotificationStore` em todas as operações
 - [ ] Implementar mensagens de sucesso para criar/editar/excluir
 - [ ] Implementar mensagens de erro com tratamento apropriado
@@ -120,6 +160,9 @@ Este guia fornece um passo a passo completo para implementar qualquer componente
 - [ ] Implementar feedback visual durante operações
 
 ### **4.4 Configurar Navegação**
+Ver exemplo na entidade de obras nos arquivos abaixo:
+- src/views/obras/ObrasView.vue
+checklist:
 - [ ] Implementar navegação entre listagem e formulários
 - [ ] Configurar redirecionamentos após operações CRUD
 - [ ] Implementar breadcrumbs contextuais
@@ -251,5 +294,68 @@ src/
 - [ ] ✅ Testes manuais realizados
 
 ---
+
+## Problemas Frequentes e Soluções
+
+Esta seção documenta problemas comuns encontrados durante a implementação de CRUDs e suas soluções, baseados na experiência com o CRUD de Categorias de Gastos.
+
+### **1. Problemas de Compatibilidade com Bibliotecas**
+
+- **Problema**: Bibliotecas de terceiros podem não ser compatíveis com a versão do Vue utilizada no projeto.
+- **Solução**: 
+  - Sempre verifique a compatibilidade da biblioteca com Vue 3 antes de instalar
+  - Prefira bibliotecas com suporte ativo e boa documentação
+  - Use a flag `--legacy-peer-deps` apenas como último recurso
+  - Para componentes de seleção/autocomplete, considere usar `@vueform/multiselect` que é compatível com Vue 3
+
+### **2. Problemas com Importações de Tipos**
+
+- **Problema**: Erros de importação como `import { App } from 'vue'` quando App é apenas um tipo.
+- **Solução**: 
+  - Use a palavra-chave `type` nas importações de tipos: `import type { App } from 'vue'`
+  - Mantenha tipos e valores separados nas importações
+
+### **3. Problemas com Chamadas de API**
+
+- **Problema**: Endpoints de API não são chamados ou não aparecem nos logs de rede.
+- **Solução**: 
+  - Adicione logs detalhados para rastrear o fluxo de execução
+  - Verifique se o método é chamado no hook `onMounted`
+  - Certifique-se de que o caminho do endpoint está correto
+  - Verifique se o serviço está sendo importado corretamente
+
+### **4. Problemas de Layout e Espaçamento**
+
+- **Problema**: Componentes não ocupam todo o espaço disponível ou têm margens/paddings inesperados.
+- **Solução**: 
+  - Siga exatamente a estrutura CSS dos componentes existentes
+  - Evite adicionar propriedades flex desnecessárias
+  - Mantenha a estrutura HTML simples e consistente com outros componentes
+  - Use as mesmas unidades de medida (rem, px) que já são usadas no projeto
+
+### **5. Problemas de Contraste e Acessibilidade**
+
+- **Problema**: Texto com contraste insuficiente, especialmente em componentes de formulário.
+- **Solução**: 
+  - Use cores mais escuras para texto (ex: #1a202c em vez de #718096)
+  - Adicione font-weight: 500 ou 600 para melhorar a legibilidade
+  - Teste o contraste em diferentes tamanhos de tela
+  - Personalize os componentes de terceiros para seguir o padrão de design do projeto
+
+### **6. Problemas de Duplicação de Serviços**
+
+- **Problema**: Criação de serviços redundantes (ex: clientesService vs clientsService).
+- **Solução**: 
+  - Verifique se já existe um serviço para a entidade antes de criar um novo
+  - Mantenha a nomenclatura consistente (português ou inglês)
+  - Adicione novos métodos a serviços existentes em vez de criar novos arquivos
+
+### **7. Problemas de criacao de modais**
+
+- **Problema**: Criação de modais sem a necessidade, em nenhum momento foi dito que deveria ter uma modal para cadastros e edicao, se isso nunca for pedido, nao crie.
+- **Solução**: 
+  - Ao criar uma modal verifique se foi pedido
+---
+
 
 **💡 Dica**: Use este guia como checklist durante a implementação. Cada item deve ser completado e testado antes de prosseguir para o próximo. A ordem das fases é importante para manter a consistência e evitar retrabalho.
