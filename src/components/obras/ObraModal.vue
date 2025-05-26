@@ -342,13 +342,16 @@ onMounted(() => {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
-  align-items: center;
-  z-index: 50;
+  align-items: flex-start;
+  z-index: 1050;
+  overflow-y: auto;
+  padding-top: 4.5rem; /* Espaço para header */
+  box-sizing: border-box;
 }
 
 .modal-content {
@@ -359,6 +362,9 @@ onMounted(() => {
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
 .modal-header {
@@ -537,6 +543,14 @@ input:checked + .slider:before {
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 1rem;
+  background: white;
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  z-index: 2;
 }
 
 .cancel-button,
@@ -597,6 +611,19 @@ input:checked + .slider:before {
 @media (max-width: 640px) {
   .two-columns {
     flex-direction: column;
+  }
+  .modal-content {
+    max-width: 98vw;
+    width: 98vw;
+    min-width: 0;
+  }
+  .modal-header,
+  .form-actions {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .modal-body {
+    padding: 1rem;
   }
 }
 </style>

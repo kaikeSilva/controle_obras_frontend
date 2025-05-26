@@ -23,6 +23,46 @@ const router = createRouter({
           redirect: '/clientes'
         },
         {
+          path: 'obras/novo/:cliente_id?',
+          name: 'new-obra',
+          component: () => import('../views/obras/ObraFormView.vue'),
+          props: route => ({ clienteId: route.params.cliente_id ? Number(route.params.cliente_id) : null }),
+          meta: {
+            title: 'Nova Obra',
+            breadcrumb: [
+              { title: 'Home', path: '/' },
+              { title: 'Clientes', path: '/clientes' },
+              {
+                title: 'Detalhes do Cliente',
+                dynamic: true,
+                getPath: (route: any) => `/clientes/${route.params.cliente_id}`
+              },
+              { title: 'Nova Obra' }
+            ]
+          }
+        },
+        {
+          path: 'obras/:id/editar',
+          name: 'edit-obra',
+          component: () => import('../views/obras/ObraFormView.vue'),
+          meta: {
+            title: 'Editar Obra',
+            parent: 'client-details',
+            parentIdParam: 'cliente_id',
+            // Para breadcrumbs customizados
+            breadcrumb: [
+              { title: 'Home', path: '/' },
+              { title: 'Clientes', path: '/clientes' },
+              {
+                title: 'Detalhes do Cliente',
+                dynamic: true,
+                getPath: (route: any) => `/clientes/${route.params.cliente_id}`
+              },
+              { title: 'Editar Obra' }
+            ]
+          }
+        },
+        {
           path: 'clientes',
           name: 'clients',
           component: ClientsView,

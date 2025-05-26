@@ -90,7 +90,7 @@
         
         <!-- Tab Obras -->
         <div v-if="activeTab === 'obras'" class="obras-section">
-          <ObrasCrud :cliente-id="client.id" />
+          <ObrasCrud :clienteId="client.id" />
         </div>
       </div>
     </div>
@@ -134,6 +134,18 @@ const notificationStore = useNotificationStore()
 const showDeleteModal = ref(false)
 const isDeleting = ref(false)
 const activeTab = ref('dados-gerais')
+
+// Ativa tab via query param
+import { watch } from 'vue'
+watch(() => route.query.active_tab, (tab) => {
+  if (tab === 'obra' || tab === 'obras') activeTab.value = 'obras'
+  else if (tab) activeTab.value = tab
+})
+if (route.query.active_tab === 'obra' || route.query.active_tab === 'obras') {
+  activeTab.value = 'obras'
+} else if (route.query.active_tab) {
+  activeTab.value = route.query.active_tab as string
+}
 
 const handleEdit = () => {
   if (client.value?.id) {

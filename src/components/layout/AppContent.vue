@@ -45,45 +45,72 @@ interface Breadcrumb {
 const route = useRoute()
 const layoutStore = useLayoutStore()
 
-const breadcrumbs = computed<Breadcrumb[]>(() => {
+import { useBreadcrumbStore } from '@/stores/breadcrumbStore'
+const breadcrumbStore = useBreadcrumbStore()
+
+const breadcrumbs = computed(() => {
+  // Se existe um breadcrumb customizado na meta, use ele
+  if (route.meta.breadcrumb && Array.isArray(route.meta.breadcrumb)) {
+    // Tenta obter cliente_id do route ou do form (caso não esteja na URL)
+    // Busca o cliente_id do breadcrumbStore se não estiver na URL
+    let clienteId = route.params.cliente_id
+    if (!clienteId && breadcrumbStore.currentClienteId) {
+      clienteId = breadcrumbStore.currentClienteId
+    }
+    // Fallbacks antigos
+    if (!clienteId && route.params.id && window.__obraFormClienteId) {
+      clienteId = window.__obraFormClienteId
+    }
+    if (!clienteId && window.__PINIA__ && window.__PINIA__.obrasStore && window.__PINIA__.obrasStore.selectedObra) {
+      clienteId = window.__PINIA__.obrasStore.selectedObra.cliente_id
+    }
+    if (!clienteId && window.__obraForm && window.__obraForm.cliente_id) {
+      clienteId = window.__obraForm.cliente_id
+    }
+    return route.meta.breadcrumb.map((item: any) => {
+      if (item.dynamic && typeof item.getPath === 'function') {
+        let path = `/clientes/${clienteId}`
+        if (breadcrumbStore.activeTab) {
+          path += `?active_tab=${breadcrumbStore.activeTab}`
+        }
+        return {
+          title: item.title,
+          path
+        }
+      }
+      return item
+    })
+  }
+
+  // Fallback para lógica padrão
   const crumbs: Breadcrumb[] = [
     { title: 'Home', path: '/' }
   ]
-  
   if (route.meta.title) {
-    // Caso especial para usuários/novo
     if (route.path.includes('/usuarios/novo')) {
       crumbs.push(
         { title: 'Usuários', path: '/usuarios' },
         { title: 'Novo Usuário', path: route.path }
       )
-    } 
-    // Caso para rotas com parent definido
-    else if (route.meta.parent) {
-      // Encontrar a rota pai
+    } else if (route.meta.parent) {
       const parentRoute = router.getRoutes().find(r => r.name === route.meta.parent)
-      
       if (parentRoute && parentRoute.meta && parentRoute.meta.title) {
         crumbs.push({
           title: parentRoute.meta.title as string,
           path: parentRoute.path
         })
       }
-      
       crumbs.push({ 
         title: route.meta.title as string, 
         path: route.path 
       })
-    } 
-    // Caso padrão
-    else {
+    } else {
       crumbs.push({ 
         title: route.meta.title as string, 
         path: route.path 
       })
     }
   }
-  
   return crumbs
 })
 
