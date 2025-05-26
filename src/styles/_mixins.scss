@@ -1,5 +1,3 @@
-@import './variables';
-
 @mixin dark-mode {
   .dark-mode & {
     @content;
@@ -43,4 +41,15 @@
     background: #888;
     border-radius: 4px;
   }
+}
+
+@mixin button-secondary {
+  border-radius: $border-radius;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all $transition-speed;
+  border: 1px solid transparent;
+  padding: $spacing-sm $spacing-md;
+  display: inline-block;
+  text-align: center;
 }

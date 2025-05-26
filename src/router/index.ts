@@ -47,19 +47,34 @@ const router = createRouter({
           component: () => import('../views/obras/ObraFormView.vue'),
           meta: {
             title: 'Editar Obra',
-            parent: 'client-details',
-            parentIdParam: 'cliente_id',
-            // Para breadcrumbs customizados
             breadcrumb: [
               { title: 'Home', path: '/' },
-              { title: 'Clientes', path: '/clientes' },
-              {
-                title: 'Detalhes do Cliente',
-                dynamic: true,
-                getPath: (route: any) => `/clientes/${route.params.cliente_id}`
+              { 
+                title: 'Detalhes do Cliente', 
+                dynamic: true, 
+                getPath: (params, store) => `/clientes/${store.currentClienteId}?active_tab=obras`
               },
               { title: 'Editar Obra' }
-            ]
+            ],
+            requiresAuth: true
+          }
+        },
+        {
+          path: 'obras/:id',
+          name: 'obra-details',
+          component: () => import('@/views/obras/ObraDetailsView.vue'),
+          meta: {
+            title: 'Detalhes da Obra',
+            breadcrumb: [
+              { title: 'Home', path: '/' },
+              { 
+                title: 'Detalhes do Cliente', 
+                dynamic: true, 
+                getPath: (params, store) => `/clientes/${store.currentClienteId}?active_tab=obras`
+              },
+              { title: 'Detalhes da Obra' } 
+            ],
+            requiresAuth: true
           }
         },
         {
@@ -120,6 +135,20 @@ const router = createRouter({
           meta: { 
             title: 'Detalhes do Usuário',
             parent: 'users'
+          }
+        },
+        {
+          path: 'example/detail-base',
+          name: 'example-detail-base',
+          component: () => import('../views/examples/ExampleDetailView.vue'),
+          meta: {
+            title: 'Exemplo Detalhes Base',
+            breadcrumb: [
+              { title: 'Home', path: '/' },
+              { title: 'Exemplos', path: '/example/detail-base' }, 
+              { title: 'Detalhes Base' }
+            ],
+            requiresAuth: true
           }
         }
       ]

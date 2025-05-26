@@ -238,11 +238,9 @@ const formatDate = (dateString: string): string => {
 </script>
 
 <style scoped lang="scss">
-@import '@/styles/variables';
-@import '@/styles/mixins';
 .client-details-container {
   width: 100%;
-  padding: 1.5rem;
+  padding: $spacing-lg;
 }
 
 .client-details {
@@ -253,67 +251,67 @@ const formatDate = (dateString: string): string => {
 
 .client-actions {
   display: flex;
-  gap: 0.75rem;
-  margin-left: 1rem;
+  gap: $spacing-sm;
+  margin-left: $spacing-md;
 }
 
 .edit-button, .delete-button {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: $spacing-xs;
   border: none;
-  border-radius: 0.375rem;
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
+  border-radius: $border-radius;
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-size-base;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color $transition-speed;
 }
 
 .edit-button {
-  background-color: #3b82f6;
+  background-color: $primary-color;
   color: white;
 }
 
 .edit-button:hover {
-  background-color: #2563eb;
+  background-color: $primary-color-dark;
 }
 
 .delete-button {
-  background-color: #ef4444;
+  background-color: $error-color;
   color: white;
 }
 
 .delete-button:hover {
-  background-color: #dc2626;
+  background-color: $error-color-dark;
 }
 
 .edit-button .icon, .delete-button .icon {
-  width: 1rem;
-  height: 1rem;
+  width: $icon-size;
+  height: $icon-size;
 }
 
 .loading-container, .error-container {
   display: flex;
   justify-content: center;
-  padding: 3rem 0;
+  padding: $spacing-lg 0;
 }
 
 .client-header {
   margin-bottom: 0;
-  border-bottom: 1px solid #e5e7eb;
-  padding-bottom: 1rem;
+  border-bottom: 1px solid $border-color;
+  padding-bottom: $spacing-sm;
 }
 
 .client-header-main {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: $spacing-sm;
   flex-wrap: wrap;
 }
 
-@media (max-width: 768px) {
+@media (max-width: $mobile-max) {
   .client-header-main {
     flex-direction: column-reverse;
     align-items: flex-start;
@@ -321,33 +319,33 @@ const formatDate = (dateString: string): string => {
   
   .client-actions {
     margin-left: 0;
-    margin-bottom: 1rem;
+    margin-bottom: $spacing-md;
     width: 100%;
     justify-content: flex-start;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: $spacing-sm;
   }
   
   .edit-button, .delete-button {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.8125rem;
+    padding: $spacing-sm $spacing-sm * 1.5;
+    font-size: $font-size-sm;
   }
 }
 
 .client-name {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: $font-size-lg;
   font-weight: 600;
-  color: #111827;
+  color: $text-gray-dark;
   flex: 1;
 }
 
 .client-meta {
   display: flex;
-  gap: 1rem;
-  color: #6b7280;
-  font-size: 0.875rem;
+  gap: $spacing-md;
+  color: $text-gray;
+  font-size: $font-size-sm;
 }
 
 .meta-item {
@@ -356,35 +354,35 @@ const formatDate = (dateString: string): string => {
 
 .tabs {
   display: flex;
-  border-bottom: 1px solid var(--color-border);
-  margin-bottom: 1.5rem;
+  border-bottom: 1px solid $border-color;
+  margin-bottom: $spacing-lg;
 }
 
 .tab {
-  padding: 0.75rem 1rem;
+  padding: $spacing-sm $spacing-md;
   font-weight: 600;
-  color: #4b5563; /* Cinza mais escuro para melhor contraste */
+  color: $text-gray;
   cursor: pointer;
   border-bottom: 2px solid transparent;
-  transition: all 0.2s;
-  font-size: 0.95rem;
+  transition: all $transition-speed;
+  font-size: $font-size-base;
 }
 
 .tab:hover {
-  color: var(--color-primary);
+  color: $primary-color;
   background-color: rgba(79, 70, 229, 0.05);
 }
 
 .tab.active {
-  color: #3b82f6;
-  border-bottom-color: #3b82f6;
+  color: $primary-color;
+  border-bottom-color: $primary-color;
   background-color: rgba(79, 70, 229, 0.08);
   font-weight: 700;
 }
 
 .fontes-pagadoras-section,
 .obras-section {
-  padding: 0.5rem 0;
+  padding: $spacing-sm 0;
 }
 
 .tab-content {
@@ -396,17 +394,17 @@ const formatDate = (dateString: string): string => {
 }
 
 .client-name {
-  font-size: 1.25rem;
+  font-size: $font-size-lg;
   font-weight: 600;
-  color: #111827;
-  margin: 0 0 0.5rem 0;
+  color: $text-gray-dark;
+  margin: 0 0 $spacing-sm 0;
 }
 
 .client-meta {
   display: flex;
-  gap: 1rem;
-  font-size: 0.875rem;
-  color: #6b7280;
+  gap: $spacing-md;
+  font-size: $font-size-sm;
+  color: $text-gray;
 }
 
 .meta-item {
@@ -415,15 +413,15 @@ const formatDate = (dateString: string): string => {
 
 .data-section {
   background-color: white;
-  border-radius: 0.375rem;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  border: 1px solid #e5e7eb;
+  border-radius: $border-radius;
+  box-shadow: $shadow-sm;
+  border: 1px solid $border-color;
   overflow: hidden;
 }
 
 .data-row {
   display: flex;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid $border-color;
 }
 
 .data-row:last-child {
@@ -432,31 +430,67 @@ const formatDate = (dateString: string): string => {
 
 .data-label {
   flex: 0 0 200px;
-  padding: 1rem;
-  background-color: #f9fafb;
+  padding: $spacing-sm $spacing-md;
+  background-color: $bg-gray-light;
   font-weight: 500;
-  color: #374151;
+  color: $text-gray-dark;
+  border-right: 1px solid $border-color;
+  flex-basis: 180px;
+  min-width: 150px;
 }
 
 .data-value {
-  flex: 1;
-  padding: 1rem;
-  color: #111827;
+  padding: $spacing-sm $spacing-md;
+  color: $text-gray;
+  flex-grow: 1;
+  word-break: break-word;
 }
 
-@media (max-width: 768px) {
+.no-data {
+  text-align: center;
+  padding: $spacing-xl;
+  color: $text-gray;
+  font-style: italic;
+}
+
+@media (max-width: $mobile-max) {
   .data-row {
     flex-direction: column;
   }
-  
   .data-label {
-    flex: none;
-    border-bottom: 1px solid #f0f0f0;
+    border-right: none;
+    border-bottom: 1px solid $border-color;
+    flex-basis: auto;
+  }
+  .client-header-main {
+    flex-direction: column-reverse;
+    align-items: flex-start;
   }
   
-  .client-meta {
+  .client-actions {
+    margin-left: 0;
+    margin-bottom: $spacing-md;
+    width: 100%;
+    justify-content: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+  }
+  
+  .edit-button, .delete-button {
+    padding: $spacing-sm $spacing-sm * 1.5;
+    font-size: $font-size-sm;
+  }
+
+  .tabs {
     flex-direction: column;
-    gap: 0.25rem;
+  }
+
+  .tab {
+    border-bottom: 1px solid $border-color;
+    &.active {
+      border-bottom-color: $primary-color;
+    }
   }
 }
 </style>

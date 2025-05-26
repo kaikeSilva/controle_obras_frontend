@@ -56,6 +56,7 @@
           @edit="openEditModal" 
           @delete="confirmDelete" 
           @sort="handleSort"
+          @view="viewObra"
         />
         
 
@@ -182,6 +183,10 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const openEditModal = (obra: Obra) => {
   router.push({ name: 'edit-obra', params: { id: obra.id } })
+}
+
+const viewObra = (obra: Obra) => {
+  router.push({ name: 'obra-details', params: { id: obra.id } })
 }
 
 const closeModal = () => {
@@ -568,6 +573,55 @@ watch(() => props.clienteId, () => {
 .delete-button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+}
+
+.action-button svg, .action-button .icon-edit, .action-button .icon-trash {
+  width: 20px;
+  height: 20px;
+  display: block; /* Para garantir que o SVG não tenha espaço extra abaixo */
+}
+
+.view-button svg {
+  color: #17a2b8; /* Info blue */
+}
+.view-button:hover {
+  background-color: #e2f3f5;
+}
+
+.edit-button svg {
+  color: #4f46e5; /* Primary blue */
+}
+.edit-button:hover {
+  background-color: #e5e7eb;
+}
+
+.delete-button svg {
+  color: #dc3545; /* Danger red */
+}
+.delete-button:hover {
+  background-color: #fbebeb; /* Corrigido de #fbe_BEBE para #fbebeb */
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: white;
+  text-align: center;
+}
+
+.status-badge.success {
+  background-color: #2ecc71;
+}
+
+.status-badge.warning {
+  background-color: #f1c40f;
+}
+
+.status-badge.danger {
+  background-color: #e74c3c;
 }
 
 @media (max-width: 640px) {
