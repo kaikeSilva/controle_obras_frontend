@@ -54,6 +54,11 @@ const router = createRouter({
                 dynamic: true, 
                 getPath: (params, store) => `/clientes/${store.currentClienteId}?active_tab=obras`
               },
+              {
+                title: 'Detalhes da Obra',
+                dynamic: true,
+                getPath: (route: any) => route && route.params ? `/obras/${route.params.id}` : '#'
+              },
               { title: 'Editar Obra' }
             ],
             requiresAuth: true
