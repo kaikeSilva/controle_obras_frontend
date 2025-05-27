@@ -2,6 +2,7 @@ export interface BreadcrumbItem {
     type: string
     id: number
     name: string
+    description: string
     route: string
     params: Record<string, string>
     query: Record<string, string>

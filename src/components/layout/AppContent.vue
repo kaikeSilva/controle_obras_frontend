@@ -29,6 +29,7 @@ const updateBreadcrumb = () => {
     name: route.meta.name,
     breadcrumb: route.meta.breadcrumb,
     title: route.meta.title,
+    description: route.meta.description,
     params: route.params,
     query: route.query,
     meta: route.meta

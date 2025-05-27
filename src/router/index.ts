@@ -37,6 +37,7 @@ const router = createRouter({
           component: () => import('../views/dashboard/DashboardView.vue'),
           meta: {
             title: 'Dashboard',
+            description: 'Bem-vindo ao painel administrativo!',
             breadcrumb: "Dashboard"
           }
         },

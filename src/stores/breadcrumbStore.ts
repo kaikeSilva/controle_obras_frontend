@@ -20,11 +20,12 @@ export const useBreadcrumbStore = defineStore('breadcrumb', () => {
     
     // Se não estiver, criar novo item usando apenas o breadcrumb do meta
     const breadcrumbName = routeMeta.meta?.breadcrumb || routeMeta.breadcrumb || routeMeta.title || 'Página'
-    
+    const description = routeMeta.meta?.description || routeMeta.description || 'Página'
     const item: BreadcrumbItem = {
       type: 'page',
       id: route,
       name: breadcrumbName,
+      description: description,
       route: route,
       params: routeMeta.params || {},
       query: routeMeta.query || {},

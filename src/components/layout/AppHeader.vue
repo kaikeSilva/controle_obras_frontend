@@ -6,7 +6,10 @@
     </button>
     
     <div class="header-title">
-      {{ currentContext?.name }}
+      <h1>
+        {{ currentContext?.name }}
+      </h1>
+      <span>{{ currentContext?.description }}</span>
     </div>
     
     <div class="header-actions">
@@ -114,11 +117,15 @@ function handleMenuToggle() {
   margin-left: 1rem;
   
   h1 {
-    font-size: 1.25rem;
-    margin: 0;
     color: #111;
     font-weight: 700;
-    letter-spacing: 0.5px;
+    font-size: 1.25rem;
+  }
+  
+  p {
+    color:rgb(59, 61, 65);
+    font-weight: 500;
+    font-size: 0.95rem;
   }
 }
 
