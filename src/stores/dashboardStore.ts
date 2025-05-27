@@ -25,7 +25,6 @@ export const useDashboardStore = defineStore('dashboard', () => {
   // Getters
   const statCards = computed<DashboardCard[]>(() => {
     if (!dashboardData.value || !dashboardData.value.resumo) return []
-    console.log("dashboardData.value.resumo.cards", dashboardData.value.resumo.cards)
     return dashboardData.value.resumo.cards || []
   })
 
@@ -63,12 +62,9 @@ export const useDashboardStore = defineStore('dashboard', () => {
     error.value = null
     
     try {
-      console.log('Buscando dados do dashboard com filtros:', filtros.value)
       dashboardData.value = await dashboardService.getDashboardData(filtros.value)
-      console.log('Dados do dashboard recebidos:', dashboardData.value)
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Erro ao carregar dados do dashboard'
-      console.error('Erro ao carregar dados do dashboard:', err)
     } finally {
       isLoading.value = false
     }
