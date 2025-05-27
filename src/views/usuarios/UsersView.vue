@@ -137,7 +137,7 @@ const handleSort = async (field: string) => {
   await usersStore.fetchUsers(
     currentPage.value, 
     perPage.value, 
-    Object.keys(activeFilters).length > 0 ? { ...activeFilters } : undefined,
+    Object.keys(activeFilters.value).length > 0 ? { ...activeFilters.value } : undefined,
     { sortBy: sortBy.value, direction: sortDirection.value }
   )
 }

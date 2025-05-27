@@ -19,30 +19,32 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, defineProps, computed } from 'vue'
 import { Chart, registerables } from 'chart.js'
+import type { DashboardGraficoData } from '@/types/dashboard.types'
+import { useDashboardStore } from '@/stores/dashboardStore'
 
 // Registrar componentes do Chart.js
 Chart.register(...registerables)
+
+// Props para receber os dados do gráfico
+const props = defineProps<{
+  chartData: {
+    gastos: any[],
+    faturamento: any[],
+    entradas: any[]
+  }
+}>()
+
+// Usar a store do dashboard para obter os labels
+const dashboardStore = useDashboardStore()
 
 // Referência para o elemento canvas
 const barChart = ref<HTMLCanvasElement | null>(null)
 let chartInstance: Chart | null = null
 
-// Props para receber os dados do gráfico
-const props = defineProps({
-  chartData: {
-    type: Object,
-    required: true,
-    validator: (value: any) => {
-      return value.gastos && value.faturamento && value.entradas
-    }
-  },
-  labels: {
-    type: Array,
-    default: () => ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho']
-  }
-})
+// Labels para o eixo X (meses) da store
+const labels = computed(() => dashboardStore.labels)
 
 // Inicializar o gráfico
 onMounted(() => {
@@ -62,7 +64,7 @@ function initChart() {
       chartInstance = new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: props.labels,
+          labels: labels.value,
           datasets: [
             {
               label: 'Gastos',
@@ -162,11 +164,24 @@ function initChart() {
 
 // Função para atualizar o gráfico quando os dados mudarem
 function updateChart() {
-  if (chartInstance) {
-    chartInstance.data.datasets[0].data = props.chartData.gastos
-    chartInstance.data.datasets[1].data = props.chartData.faturamento
-    chartInstance.data.datasets[2].data = props.chartData.entradas
-    chartInstance.update()
+  if (chartInstance && props.chartData) {
+    // Verificar se os dados existem antes de atualizar
+    if (props.chartData.gastos && props.chartData.faturamento && props.chartData.entradas) {
+      // Atualizar os dados
+      chartInstance.data.datasets[0].data = props.chartData.gastos
+      chartInstance.data.datasets[1].data = props.chartData.faturamento
+      chartInstance.data.datasets[2].data = props.chartData.entradas
+      
+      // Atualizar os labels
+      chartInstance.data.labels = labels.value
+      
+      // Atualizar o gráfico
+      chartInstance.update()
+      
+      console.log('Gráfico atualizado com dados:', props.chartData)
+    } else {
+      console.warn('Dados incompletos para atualizar o gráfico:', props.chartData)
+    }
   }
 }
 </script>

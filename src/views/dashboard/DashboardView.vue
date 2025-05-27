@@ -9,25 +9,40 @@
     <!-- Filters Section -->
     <DashboardFilter @filter-applied="handleFilterApplied" @filter-cleared="handleFilterCleared" />
 
-    <!-- Stats Grid -->
-    <div class="stats-grid">
-      <DashboardCard 
-        v-for="(card, index) in statCards" 
-        :key="index"
-        :title="card.title"
-        :value="card.value"
-        :icon="card.icon"
-        :change="card.change"
-      />
+    <!-- Loading Indicator -->
+    <div v-if="dashboardStore.isLoading" class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>Carregando dados...</p>
     </div>
 
-    <!-- Chart Section -->
-    <DashboardMonthEvolution :chartData="filteredData" />
+    <!-- Error Message -->
+    <div v-else-if="dashboardStore.error" class="error-container">
+      <p class="error-message">{{ dashboardStore.error }}</p>
+      <button class="retry-button" @click="dashboardStore.fetchDashboardData()">Tentar novamente</button>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div v-else>
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <DashboardCard 
+          v-for="(card, index) in dashboardStore.statCards" 
+          :key="index"
+          :title="card.title"
+          :value="card.value"
+          :icon="card.icon"
+          :change="card.change"
+        />
+      </div>
+
+      <!-- Chart Section -->
+      <DashboardMonthEvolution :chartData="filteredData" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import IconCircleCheck from '@/components/icons/IconCircleCheck.vue'
 import IconMoney from '@/components/icons/IconMoney.vue'
 import IconPlus from '@/components/icons/IconPlus.vue'
@@ -35,120 +50,68 @@ import IconCalendar from '@/components/icons/IconCalendar.vue'
 import DashboardFilter from '@/components/dashboard/DashboardFilter.vue'
 import DashboardCard from '@/components/dashboard/DashboardCard.vue'
 import DashboardMonthEvolution from '@/components/dashboard/DashboardMonthEvolution.vue'
+import { useDashboardStore } from '@/stores/dashboardStore'
+import type { DashboardFiltros } from '@/types/dashboard.types'
 
-// Dados mockados para o gráfico e cards
 
-// Dados mockados para os cards de estatísticas
-const statCards = [
-  {
-    title: 'Total Gastos',
-    value: 'R$ 303,0K',
-    icon: 'IconCircleCheck',
-    change: {
-      direction: '↗',
-      value: '+4,2%',
-      isPositive: false
-    }
-  },
-  {
-    title: 'Faturamento',
-    value: 'R$ 570,0K',
-    icon: 'IconMoney',
-    change: {
-      direction: '↗',
-      value: '+12,8%',
-      isPositive: true
-    }
-  },
-  {
-    title: 'Entradas de Recurso',
-    value: 'R$ 198,0K',
-    icon: 'IconPlus',
-    change: {
-      direction: '↗',
-      value: '+18,5%',
-      isPositive: true
-    }
-  },
-  {
-    title: 'Saldo Líquido',
-    value: 'R$ 465,0K',
-    icon: 'IconCalendar',
-    change: {
-      direction: '↗',
-      value: '+15,3%',
-      isPositive: true
-    }
+// Usar a store do dashboard
+const dashboardStore = useDashboardStore()
+
+// Inicializar o carregamento dos dados
+onMounted(async () => {
+  await dashboardStore.fetchDashboardData()
+})
+
+// Usar os dados da store em vez de dados mockados
+const filteredData = computed(() => {
+  return dashboardStore.chartData || {
+    gastos: [],
+    faturamento: [],
+    entradas: []
   }
-]
-
-// Dados mockados para o gráfico
-const chartData = {
-  gastos: {
-    data: [45000, 52000, 48000, 56000, 49000, 53000]
-  },
-  faturamento: {
-    data: [85000, 92000, 78000, 105000, 98000, 112000]
-  },
-  entradas: {
-    data: [25000, 18000, 35000, 42000, 28000, 50000]
-  }
-}
-
-// Dados filtrados (inicialmente iguais aos dados originais)
-const filteredData = ref({
-  gastos: [...chartData.gastos.data],
-  faturamento: [...chartData.faturamento.data],
-  entradas: [...chartData.entradas.data]
 })
 
 // Funções para lidar com os eventos de filtro
-function handleFilterApplied(filters: any) {
+async function handleFilterApplied(filters: DashboardFiltros) {
   console.log('Filtros aplicados:', filters)
   
-  // Aqui você aplicaria a lógica real de filtragem com base nos filtros
-  // Por enquanto, vamos apenas simular uma alteração nos dados
-  if (filters.obra === 'obra1') {
-    filteredData.value = {
-      gastos: [35000, 42000, 38000, 46000, 39000, 43000],
-      faturamento: [65000, 72000, 58000, 85000, 78000, 92000],
-      entradas: [20000, 15000, 25000, 32000, 18000, 40000]
-    }
-  } else if (filters.obra === 'obra2') {
-    filteredData.value = {
-      gastos: [55000, 62000, 58000, 66000, 59000, 63000],
-      faturamento: [95000, 102000, 88000, 115000, 108000, 122000],
-      entradas: [30000, 23000, 40000, 47000, 33000, 55000]
-    }
-  } else if (filters.categoria === 'material') {
-    filteredData.value = {
-      gastos: [25000, 28000, 24000, 32000, 26000, 30000],
-      faturamento: [45000, 52000, 38000, 65000, 58000, 72000],
-      entradas: [15000, 10000, 20000, 25000, 13000, 30000]
-    }
-  } else {
-    // Resetar para os dados originais se não houver filtro específico
-    filteredData.value = {
-      gastos: [...chartData.gastos.data],
-      faturamento: [...chartData.faturamento.data],
-      entradas: [...chartData.entradas.data]
+  // Converter os filtros do componente para o formato esperado pela API
+  const dashboardFiltros: DashboardFiltros = {
+    dataInicio: filters.dataInicio,
+    dataFim: filters.dataFim,
+    obras: [],
+    categorias_gasto: []
+  }
+  
+  // Se houver obra selecionada, converter para o formato esperado
+  if (filters.obra) {
+    // Converter o ID da obra para número
+    const obraId = parseInt(filters.obra)
+    if (!isNaN(obraId)) {
+      dashboardFiltros.obras = [obraId]
     }
   }
   
-  // Os dados filtrados foram atualizados, o gráfico será atualizado automaticamente
+  // Se houver categoria selecionada, converter para o formato esperado
+  if (filters.categoria) {
+    // Converter o ID da categoria para número
+    const categoriaId = parseInt(filters.categoria)
+    if (!isNaN(categoriaId)) {
+      dashboardFiltros.categorias_gasto = [categoriaId]
+    }
+  }
+  
+  // Atualizar os filtros na store e buscar os dados atualizados
+  dashboardStore.updateFiltros(dashboardFiltros)
+  await dashboardStore.fetchDashboardData()
 }
 
-function handleFilterCleared() {
+async function handleFilterCleared() {
   console.log('Filtros limpos')
   
-  // Resetar para os dados originais
-  filteredData.value = {
-    gastos: [...chartData.gastos.data],
-    faturamento: [...chartData.faturamento.data],
-    entradas: [...chartData.entradas.data]
-  }
-  
-  // Os dados filtrados foram resetados, o gráfico será atualizado automaticamente
+  // Resetar os filtros na store e buscar os dados originais
+  dashboardStore.resetFiltros()
+  await dashboardStore.fetchDashboardData()
 }
 
 // O gráfico é atualizado automaticamente quando filteredData muda
@@ -159,46 +122,87 @@ function handleFilterCleared() {
 
 <style scoped lang="scss">
 .dashboard-container {
-  padding: 1.5rem;
-  width: 100%;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .dashboard-header {
-  margin-bottom: 2rem;
-}
-
-.dashboard-title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 0.5rem;
+  margin-bottom: 20px;
   
-  @include dark-mode {
-    color: #f1f1f1;
+  .dashboard-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 4px;
+  }
+  
+  .dashboard-description {
+    font-size: 14px;
+    color: #6b7280;
   }
 }
 
-.dashboard-description {
-  color: #64748b;
-  font-size: 0.95rem;
-  
-  @include dark-mode {
-    color: #aaa;
-  }
-}
-
-/* Stats Grid */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 32px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
 }
 
-/* Estilos para o grid de estatísticas */
-/* Os estilos dos cards foram movidos para o componente DashboardCard */
+/* Loading Styles */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+  color: #6b7280;
+  
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: #3b82f6;
+    animation: spin 1s ease-in-out infinite;
+    margin-bottom: 16px;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+}
 
-/* Os estilos do gráfico foram movidos para o componente DashboardMonthEvolution */
+/* Error Styles */
+.error-container {
+  background-color: #fee2e2;
+  border: 1px solid #ef4444;
+  border-radius: 6px;
+  padding: 16px;
+  margin: 20px 0;
+  text-align: center;
+  
+  .error-message {
+    color: #b91c1c;
+    margin-bottom: 12px;
+  }
+  
+  .retry-button {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    
+    &:hover {
+      background-color: #dc2626;
+    }
+  }
+}
 
 /* Responsive Design */
 @media (max-width: 1200px) {

@@ -113,6 +113,7 @@ import CategoriasGastosTable from './CategoriasGastosTable.vue'
 import CategoriasGastosCards from './CategoriasGastosCards.vue'
 import Pagination from '@/components/common/Pagination.vue'
 import { useNotificationStore } from '@/stores/notificationStore'
+import type { CategoriaGastoForm } from '@/types/categoriaGasto.types'
 
 // Props
 const props = defineProps<{
@@ -141,7 +142,7 @@ const errors = ref<Record<string, string>>({})
 // Formulário
 const form = ref<CategoriaGastoForm>({
   nome: '',
-  status: true,
+  status: 'ativo',
   cliente_id: props.clienteId,
   descricao: null,
   cor: null

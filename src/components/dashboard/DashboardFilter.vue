@@ -24,11 +24,9 @@
         <div class="filter-control">
           <select class="filter-select" v-model="filters.obra">
             <option value="">Todas as obras</option>
-            <option value="obra1">Residencial Vila Nova</option>
-            <option value="obra2">Edifício Comercial Centro</option>
-            <option value="obra3">Shopping Mall Norte</option>
-            <option value="obra4">Condomínio Jardins</option>
-            <option value="obra5">Hospital Regional</option>
+            <option v-for="obra in dashboardStore.filtrosDisponiveis.obras" :key="obra.id" :value="obra.id.toString()">
+              {{ obra.nome }}
+            </option>
           </select>
         </div>
       </div>
@@ -43,12 +41,9 @@
         <div class="filter-control">
           <select class="filter-select" v-model="filters.categoria">
             <option value="">Todas as categorias</option>
-            <option value="material">Material de Construção</option>
-            <option value="mao-obra">Mão de Obra</option>
-            <option value="equipamentos">Equipamentos</option>
-            <option value="transporte">Transporte</option>
-            <option value="servicos">Serviços Terceirizados</option>
-            <option value="administrativo">Administrativo</option>
+            <option v-for="categoria in dashboardStore.filtrosDisponiveis.categorias_gasto" :key="categoria.id" :value="categoria.id.toString()">
+              {{ categoria.nome }}
+            </option>
           </select>
         </div>
       </div>
@@ -90,32 +85,17 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useDashboardStore } from '@/stores/dashboardStore'
 
-// Dados mockados para filtros
-const mockData = {
-  obras: {
-    'obra1': { name: 'Residencial Vila Nova', gastos: [35000, 42000, 38000, 46000, 39000, 43000] },
-    'obra2': { name: 'Edifício Comercial Centro', gastos: [55000, 62000, 58000, 66000, 59000, 63000] },
-    'obra3': { name: 'Shopping Mall Norte', gastos: [75000, 82000, 78000, 86000, 79000, 83000] },
-    'obra4': { name: 'Condomínio Jardins', gastos: [45000, 52000, 48000, 56000, 49000, 53000] },
-    'obra5': { name: 'Hospital Regional', gastos: [65000, 72000, 68000, 76000, 69000, 73000] }
-  },
-  categorias: {
-    'material': { name: 'Material de Construção', gastos: [25000, 28000, 24000, 32000, 26000, 30000] },
-    'mao-obra': { name: 'Mão de Obra', gastos: [15000, 18000, 16000, 19000, 17000, 18000] },
-    'equipamentos': { name: 'Equipamentos', gastos: [8000, 12000, 10000, 15000, 11000, 13000] },
-    'transporte': { name: 'Transporte', gastos: [5000, 7000, 6000, 8000, 7000, 9000] },
-    'servicos': { name: 'Serviços Terceirizados', gastos: [12000, 15000, 13000, 16000, 14000, 17000] },
-    'administrativo': { name: 'Administrativo', gastos: [10000, 12000, 11000, 13000, 12000, 14000] }
-  }
-}
+// Usar a store do dashboard
+const dashboardStore = useDashboardStore()
 
 // Estado dos filtros
 const filters = ref({
   obra: '',
   categoria: '',
-  dataInicio: '2025-01-01',
-  dataFim: '2025-06-30'
+  dataInicio: dashboardStore.filtros.dataInicio,
+  dataFim: dashboardStore.filtros.dataFim
 })
 
 // Emitir eventos para o componente pai
@@ -129,9 +109,10 @@ const hasActiveFilters = computed(() => {
 })
 
 const isDateRangeActive = computed(() => {
-  const defaultStart = '2025-01-01'
-  const defaultEnd = '2025-06-30'
-  return filters.value.dataInicio !== defaultStart || filters.value.dataFim !== defaultEnd
+  // Verificar se as datas são diferentes das datas iniciais da store
+  const initialStart = dashboardStore.filtros.dataInicio
+  const initialEnd = dashboardStore.filtros.dataFim
+  return filters.value.dataInicio !== initialStart || filters.value.dataFim !== initialEnd
 })
 
 // Métodos
@@ -143,8 +124,8 @@ function clearFilters() {
   filters.value = {
     obra: '',
     categoria: '',
-    dataInicio: '2025-01-01',
-    dataFim: '2025-06-30'
+    dataInicio: dashboardStore.filtros.dataInicio,
+    dataFim: dashboardStore.filtros.dataFim
   }
   emit('filter-cleared')
 }
@@ -155,18 +136,20 @@ function removeFilter(type: string) {
   } else if (type === 'categoria') {
     filters.value.categoria = ''
   } else if (type === 'date') {
-    filters.value.dataInicio = '2025-01-01'
-    filters.value.dataFim = '2025-06-30'
+    filters.value.dataInicio = dashboardStore.filtros.dataInicio
+    filters.value.dataFim = dashboardStore.filtros.dataFim
   }
   emit('filter-applied', { ...filters.value })
 }
 
-function getObraName(id: string) {
-  return mockData.obras[id as keyof typeof mockData.obras]?.name || id
+function getObraName(id: string): string {
+  const obra = dashboardStore.filtrosDisponiveis.obras.find(o => o.id.toString() === id)
+  return obra?.nome || id
 }
 
-function getCategoriaName(id: string) {
-  return mockData.categorias[id as keyof typeof mockData.categorias]?.name || id
+function getCategoriaName(id: string): string {
+  const categoria = dashboardStore.filtrosDisponiveis.categorias_gasto.find(c => c.id.toString() === id)
+  return categoria?.nome || id
 }
 
 function formatDate(dateString: string) {

@@ -63,7 +63,7 @@
               class="form-input"
               :class="{ 'input-error': errors.passwordConfirmation }"
               placeholder="Confirmar senha"
-              :required="!isEditMode || form.password"
+              :required="(!isEditMode || !!form.password) ? true : false"
             />
             <span v-if="errors.passwordConfirmation" class="error-message">{{ errors.passwordConfirmation }}</span>
           </div>
