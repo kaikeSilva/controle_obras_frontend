@@ -67,27 +67,28 @@
               <span 
                 class="status-badge" 
                 :class="{ 'active': fonte.ativo, 'inactive': !fonte.ativo }"
-                @click="toggleStatus(fonte.id, !fonte.ativo)"
+                
               >
                 {{ fonte.ativo ? 'Ativo' : 'Inativo' }}
               </span>
             </td>
             <td>{{ formatDate(fonte.data_cadastro || fonte.created_at) }}</td>
             <td class="actions-cell">
-              <div class="actions-menu">
-                <button class="actions-button" @click="toggleMenu(fonte.id)">
-                  <IconEllipsis size="18" />
+              <div class="action-buttons">
+                <button
+                  class="action-button edit-button"
+                  @click="handleEdit(fonte.id)"
+                  title="Editar"
+                >
+                  <IconEdit size="16" />
                 </button>
-                <div v-if="activeMenu === fonte.id" class="actions-dropdown">
-                  <div class="dropdown-item" @click="handleEdit(fonte.id)">
-                    <IconEdit />
-                    <span>Editar</span>
-                  </div>
-                  <div class="dropdown-item delete" @click="handleDelete(fonte.id)">
-                    <IconDelete />
-                    <span>Excluir</span>
-                  </div>
-                </div>
+                <button
+                  class="action-button delete-button"
+                  @click="handleDelete(fonte.id)"
+                  title="Excluir"
+                >
+                  <IconDelete size="16" />
+                </button>
               </div>
             </td>
           </tr>
@@ -103,7 +104,7 @@
           <span 
             class="status-badge" 
             :class="{ 'active': fonte.ativo, 'inactive': !fonte.ativo }"
-            @click="toggleStatus(fonte.id, !fonte.ativo)"
+            
           >
             {{ fonte.ativo ? 'Ativo' : 'Inativo' }}
           </span>
@@ -122,12 +123,12 @@
         </div>
         
         <div class="mobile-card-actions">
-          <button class="mobile-card-button edit" @click="handleEdit(fonte.id)">
-            <IconEdit size="14" />
+          <button class="mobile-card-button edit" @click="handleEdit(fonte.id)" title="Editar">
+            <IconEdit size="20" />
             <span>Editar</span>
           </button>
-          <button class="mobile-card-button delete" @click="handleDelete(fonte.id)">
-            <IconDelete size="14" />
+          <button class="mobile-card-button delete" @click="handleDelete(fonte.id)" title="Excluir">
+            <IconDelete size="20" />
             <span>Excluir</span>
           </button>
         </div>
@@ -141,7 +142,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import type { FontePagadora, PaginationLinks } from '@/types/fontePagadora.types'
 import Pagination from '@/components/common/Pagination.vue'
 import IconSort from '@/components/icons/IconSort.vue'
-import IconEllipsis from '@/components/icons/IconEllipsis.vue'
+// IconEllipsis import removed
 import IconEdit from '@/components/icons/IconEdit.vue'
 import IconDelete from '@/components/icons/IconDelete.vue'
 
@@ -168,28 +169,8 @@ const emit = defineEmits<{
   (e: 'sort', field: string): void;
   (e: 'edit', fonteId: number): void;
   (e: 'delete', fonteId: number): void;
-  (e: 'toggle-status', fonteId: number, ativo: boolean): void;
+  
 }>()
-
-// Controle do menu de ações
-const activeMenu = ref<number | null>(null)
-const toggleMenu = (fonteId: number) => {
-  if (activeMenu.value === fonteId) {
-    activeMenu.value = null
-  } else {
-    activeMenu.value = fonteId
-  }
-}
-
-// Fechar o menu quando clicar fora dele
-const closeMenuOnClickOutside = (event: MouseEvent) => {
-  if (activeMenu.value !== null) {
-    const target = event.target as HTMLElement
-    if (!target.closest('.actions-menu')) {
-      activeMenu.value = null
-    }
-  }
-}
 
 // Estado para controlar a visualização mobile/desktop
 const isMobile = ref(false)
@@ -201,7 +182,7 @@ const checkScreenSize = () => {
 
 // Adicionar e remover os listeners quando o componente é montado/desmontado
 onMounted(() => {
-  document.addEventListener('click', closeMenuOnClickOutside)
+  // document.removeEventListener('click', closeMenuOnClickOutside) // Listener removed
   
   // Verificar o tamanho da tela inicialmente
   checkScreenSize()
@@ -211,24 +192,24 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  document.removeEventListener('click', closeMenuOnClickOutside)
+  // document.removeEventListener('click', closeMenuOnClickOutside) // Listener removed
   window.removeEventListener('resize', checkScreenSize)
 })
 
-// Ações do menu
+// Ações
 const handleEdit = (fonteId: number) => {
   emit('edit', fonteId)
-  activeMenu.value = null
+  // activeMenu.value = null // activeMenu removed
 }
 
 const handleDelete = (fonteId: number) => {
   emit('delete', fonteId)
-  activeMenu.value = null
+  // activeMenu.value = null // activeMenu removed
 }
 
-const toggleStatus = (fonteId: number, ativo: boolean) => {
-  emit('toggle-status', fonteId, ativo)
-}
+// const toggleStatus = (fonteId: number, ativo: boolean) => {
+//   emit('toggle-status', fonteId, ativo)
+// } // Function removed
 
 const handleSort = (field: string) => {
   emit('sort', field)
@@ -351,7 +332,7 @@ const formatDate = (dateString: string): string => {
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 500;
-  cursor: pointer;
+  cursor: pointer; /* Kept as it was, though click handler is removed */
 }
 
 .status-badge.active {
@@ -365,9 +346,8 @@ const formatDate = (dateString: string): string => {
 }
 
 .actions-cell {
-  width: 60px;
-  text-align: center;
-  position: relative;
+  width: 60px; 
+  text-align: center; 
 }
 
 .actions-header {
@@ -375,62 +355,45 @@ const formatDate = (dateString: string): string => {
   width: 60px;
 }
 
-.actions-menu {
-  position: relative;
-  display: inline-block;
+/* Styles for new desktop action buttons */
+.action-buttons {
+  display: flex;
+  gap: 0; 
+  justify-content: center; 
 }
 
-.actions-button {
+.action-button {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 0.25rem;
-  color: var(--color-text-secondary);
-}
-
-.actions-button:hover {
-  background-color: var(--color-gray-100);
-}
-
-.actions-dropdown {
-  position: absolute;
-  right: 0;
-  top: 100%;
-  z-index: 10;
-  background-color: white;
-  border-radius: 0.375rem;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  min-width: 150px;
-  overflow: hidden;
-}
-
-.dropdown-item {
-  display: flex;
+  padding: 5px;
+  border-radius: 4px;
+  color: #6b7280; 
+  transition: all 0.2s;
+  display: inline-flex; 
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  cursor: pointer;
-  font-size: 0.875rem;
-  color: #1f2937; /* Texto mais escuro */
-  font-weight: 500;
+  justify-content: center;
+  width: 2rem; 
+  height: 2rem; 
 }
 
-.dropdown-item:hover {
-  background-color: var(--color-gray-50);
+.action-button.edit-button:hover {
+  background-color: #dbeafe; 
+  color: #1e40af;      
 }
 
-.dropdown-item.delete {
-  color: var(--color-danger);
+.action-button.delete-button:hover {
+  background-color: #fee2e2; 
+  color: #b91c1c;      
 }
 
-.dropdown-item.delete:hover {
-  background-color: #fee2e2;
+.action-button ::v-deep(svg) {
+  width: 1rem;  
+  height: 1rem; 
 }
 
+/* Styles for mobile card view action buttons */
 @media (max-width: 767px) {
-  
-  /* Exibimos cards no lugar da tabela em dispositivos móveis */
   .mobile-cards {
     display: flex;
     flex-direction: column;
@@ -498,12 +461,17 @@ const formatDate = (dateString: string): string => {
     gap: 0.25rem;
     padding: 0.375rem 0.75rem;
     border-radius: 0.375rem;
-    font-size: 0.75rem;
+    font-size: 0.75rem; /* For the span */
     font-weight: 600;
     cursor: pointer;
-    background-color: #f3f4f6;
-    color: #1f2937;
+    background-color: #f3f4f6; /* Base background */
+    color: #1f2937; /* Base text color */
     border: none;
+  }
+
+  .mobile-card-button ::v-deep(svg) {
+    width: 1.25rem; /* 20px */
+    height: 1.25rem; /* 20px */
   }
   
   .mobile-card-button.edit {

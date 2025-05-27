@@ -74,24 +74,28 @@
             <td>{{ client.address || '-' }}</td>
             <td class="actions-cell" 
             :style="{ position: clients.length === clients.indexOf(client) + 1 ? 'absolute' : '', borderBottom: clients.length === clients.indexOf(client) + 1 ? 'none' : '' }">
-              <div class="actions-menu">
-                <button class="actions-button" @click="toggleMenu(client.id)">
-                  <IconEllipsis size="18" />
+              <div class="action-buttons">
+                <button
+                  class="action-button view-button"
+                  @click="handleView(client.id)"
+                  title="Visualizar"
+                >
+                  <IconView size="16" />
                 </button>
-                <div v-if="activeMenu === client.id" class="actions-dropdown">
-                    <div class="dropdown-item" @click="handleView(client.id)">
-                      <IconView />
-                      <span>Visualizar</span>
-                    </div>
-                    <div class="dropdown-item" @click="handleEdit(client.id)">
-                      <IconEdit />
-                      <span>Editar</span>
-                    </div>
-                    <div class="dropdown-item delete" @click="handleDelete(client.id)">
-                      <IconDelete />
-                      <span>Excluir</span>
-                    </div>
-                  </div>
+                <button
+                  class="action-button edit-button"
+                  @click="handleEdit(client.id)"
+                  title="Editar"
+                >
+                  <IconEdit size="16" />
+                </button>
+                <button
+                  class="action-button delete-button"
+                  @click="handleDelete(client.id)"
+                  title="Excluir"
+                >
+                  <IconDelete size="16" />
+                </button>
               </div>
             </td>
           </tr>
@@ -125,7 +129,7 @@ import type { Client, PaginationLinks } from '@/types/client.types'
 import Pagination from '@/components/common/Pagination.vue'
 import ConfirmationModal from '@/components/common/ConfirmationModal.vue'
 import IconSort from '@/components/icons/IconSort.vue'
-import IconEllipsis from '@/components/icons/IconEllipsis.vue'
+// IconEllipsis import removed as it's no longer used
 import IconView from '@/components/icons/IconView.vue'
 import IconEdit from '@/components/icons/IconEdit.vue'
 import IconDelete from '@/components/icons/IconDelete.vue'
@@ -160,44 +164,13 @@ const emit = defineEmits<{
   (e: 'delete', clientId: number): void;
 }>()
 
-// Controle do menu de ações
-const activeMenu = ref<number | null>(null)
-const toggleMenu = (clientId: number) => {
-  if (activeMenu.value === clientId) {
-    activeMenu.value = null
-  } else {
-    activeMenu.value = clientId
-  }
-}
-
-// Fechar o menu quando clicar fora dele
-const closeMenuOnClickOutside = (event: MouseEvent) => {
-  if (activeMenu.value !== null) {
-    const target = event.target as HTMLElement
-    if (!target.closest('.actions-menu')) {
-      activeMenu.value = null
-    }
-  }
-}
-
-// Adicionar e remover o listener quando o componente é montado/desmontado
-onMounted(() => {
-  document.addEventListener('click', closeMenuOnClickOutside)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('click', closeMenuOnClickOutside)
-})
-
 // Ações do menu
 const handleView = (clientId: number) => {
   router.push({ name: 'client-details', params: { id: clientId.toString() } })
-  activeMenu.value = null
 }
 
 const handleEdit = (clientId: number) => {
   router.push({ name: 'edit-client', params: { id: clientId.toString() } })
-  activeMenu.value = null
 }
 
 const handleDelete = (clientId: number) => {
@@ -207,7 +180,6 @@ const handleDelete = (clientId: number) => {
     clientToDelete.value = client
     showDeleteModal.value = true
   }
-  activeMenu.value = null
 }
 
 const confirmDelete = async () => {
@@ -389,65 +361,53 @@ const formatDate = (dateString: string): string => {
 
 .actions-cell {
   text-align: center;
-  position: relative;
-  overflow: visible;
+  /* position: relative; and overflow: visible; removed as they are no longer needed for the dropdown */
 }
 
-.actions-menu {
-  position: relative;
-  display: inline-block;
+.action-buttons {
+  display: flex;
+  gap: 0; /* Or a small gap if preferred, ObrasTable.vue has 0 */
+  justify-content: center; /* Center buttons within the cell */
 }
 
-.actions-button {
+.action-button {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 5px;
-  border-radius: 4px;
-  color: #6b7280;
+  padding: 5px; /* Adjust as needed */
+  border-radius: 4px; /* Or other border-radius */
+  color: #6b7280; /* Default icon color */
   transition: all 0.2s;
-}
-
-.actions-button:hover {
-  background-color: #f3f4f6;
-  color: #111827;
-}
-
-.actions-dropdown {
-  position: absolute;
-  right: 0;
-  /* Alterar o posicionamento para que o menu abra para baixo */
-  top: 100%;
-  background-color: white;
-  border-radius: 4px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  min-width: 150px;
-  z-index: 1000; /* Aumentar o z-index para garantir que o menu fique acima de outros elementos */
-  margin-top: 5px;
-  overflow: visible;
-  border: 1px solid #e5e7eb;
-}
-
-.dropdown-item {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  color: #374151;
+  justify-content: center;
+  width: 2rem; /* Or adjust to fit icons */
+  height: 2rem; /* Or adjust to fit icons */
 }
 
-.dropdown-item:hover {
-  background-color: #f9fafb;
+.action-button svg {
+  width: 1rem; /* Default icon size, matches size="16" */
+  height: 1rem; /* Default icon size, matches size="16" */
 }
 
-.dropdown-item.delete {
-  color: #ef4444;
+.action-button:hover {
+  background-color: #e5e7eb; /* Default hover background */
 }
 
-.dropdown-item.delete:hover {
-  background-color: #fee2e2;
+/* Specific hover styles similar to ObrasTable.vue */
+.view-button:hover {
+  background-color: #dbeafe; /* Light blue */
+  color: #1e40af; /* Dark blue */
+}
+
+.edit-button:hover {
+  background-color: #dbeafe; /* Light blue */
+  color: #1e40af; /* Dark blue */
+}
+
+.delete-button:hover {
+  background-color: #fee2e2; /* Light red */
+  color: #b91c1c; /* Dark red */
 }
 
 @media (min-width: 768px) {
