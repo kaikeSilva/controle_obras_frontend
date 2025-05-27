@@ -185,6 +185,9 @@ const sortTable = (field: string) => {
 </script>
 
 <style scoped lang="scss">
+@import "@/styles/variables.scss";
+@import "@/styles/mixins.scss";
+
 .table-container {
   width: 100%;
   overflow-x: auto;

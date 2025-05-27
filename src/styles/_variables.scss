@@ -11,6 +11,7 @@ $color-danger-light: #fee2e2; // Adicionado - fundo para botões de perigo
 $success-color: #10b981;
 $border-color: #e5e7eb;
 $text-gray: #6b7280;
+$text-gray-medium: #6b7280; // Alias para $text-gray
 $text-gray-dark: #374151; // Cor para labels e texto importante
 $text-color-dark: #111827; // Alias para $text-gray-dark
 $color-text-primary: #111827; // Alias para $text-color-dark
@@ -58,6 +59,7 @@ $border-radius-sm: 0.25rem; // Adicionado - raio menor para elementos menores
 $transition-speed: 0.3s;
 
 // Espaçamentos
+$spacing-xxs: 0.125rem; // 2px
 $spacing-xs: 0.25rem; // 4px
 $spacing-sm: 0.5rem;  // 8px
 $spacing-md: 1rem;    // 16px
