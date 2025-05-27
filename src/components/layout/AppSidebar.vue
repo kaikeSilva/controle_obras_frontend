@@ -2,7 +2,7 @@
   <aside class="app-sidebar" :class="sidebarClasses">
     <div class="sidebar-header">
       <IconCube class="logo" :size="32" />
-      <span class="brand-name" v-if="!layoutStore.isSidebarCollapsed">Admin Panel</span>
+      <span class="brand-name" v-if="!layoutStore.isSidebarCollapsed">Obras ADM</span>
       
       <!-- Botão para fechar o menu no mobile -->
       <button 
@@ -80,6 +80,7 @@ import IconChevronDown from '@/components/icons/IconChevronDown.vue'
 import IconHome from '@/components/icons/IconHome.vue'
 import IconUsers from '@/components/icons/IconUsers.vue'
 import IconSignOut from '@/components/icons/IconSignOut.vue'
+import IconChart from '@/components/icons/IconChart.vue'
 
 interface MenuItem {
   title: string
@@ -116,10 +117,16 @@ const iconMap: Record<string, Component> = {
   users: IconUsers,
   signOut: IconSignOut,
   cube: IconCube,
-  money: IconCube // Usando IconCube como placeholder para money (pode ser substituído por um ícone mais adequado depois)
+  money: IconCube, // Usando IconCube como placeholder para money (pode ser substituído por um ícone mais adequado depois)
+  chart: IconChart
 }
 
 const menuItems: MenuItem[] = [
+  {
+    title: "Dashboard",
+    icon: "chart",
+    route: "/dashboard"
+  },
   {
     title: "Clientes",
     icon: "users",

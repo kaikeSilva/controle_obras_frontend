@@ -8,10 +8,10 @@
     </div>
     
     <div class="header-actions">
-      <button class="theme-toggle" @click="layoutStore.toggleDarkMode()">
+      <!-- <button class="theme-toggle" @click="layoutStore.toggleDarkMode()">
         <IconSun v-if="layoutStore.isDarkMode" />
         <IconMoon v-else />
-      </button>
+      </button> -->
       
       <span class="user-name">{{ userStore.userName }}</span>
       <img 

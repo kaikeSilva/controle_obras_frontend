@@ -25,10 +25,19 @@ const router = createRouter({
       children: [
         {
           path: '',
-          redirect: '/clientes',
+          redirect: '/dashboard',
           meta: {
             title: 'Home',
-            breadcrumb: "Clientes"
+            breadcrumb: "Dashboard"
+          }
+        },
+        {
+          path: 'dashboard',
+          name: 'dashboard',
+          component: () => import('../views/dashboard/DashboardView.vue'),
+          meta: {
+            title: 'Dashboard',
+            breadcrumb: "Dashboard"
           }
         },
         {

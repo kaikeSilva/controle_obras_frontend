@@ -21,6 +21,7 @@
   "dependencies": {
     "@vueform/multiselect": "^2.6.11",
     "axios": "^1.9.0",
+    "chart.js": "^4.4.9",
     "laravel-echo": "^2.1.4",
     "pinia": "^3.0.2",
     "pusher-js": "^8.4.0",
