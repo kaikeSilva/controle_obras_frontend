@@ -109,7 +109,6 @@ import Pagination from '@/components/common/Pagination.vue'
 const props = defineProps<{
   clienteId: number
 }>()
-console.log('[ObrasCrud] clienteId recebido:', props.clienteId)
 const cliente_id = props.clienteId
 
 // Store

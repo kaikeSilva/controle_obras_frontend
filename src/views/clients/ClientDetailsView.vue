@@ -213,19 +213,15 @@ const handleDelete = async () => {
 onMounted(async () => {
   try {
     const clientId = parseInt(route.params.id as string)
-    console.log('ID do cliente:', clientId)
     
     if (isNaN(clientId)) {
       throw new Error('ID do cliente inválido')
     }
     
     // Buscar os dados do cliente
-    console.log('Buscando dados do cliente...')
     const response = await clientsService.getClientById(clientId)
-    console.log('Dados recebidos:', response)
     
     client.value = response
-    console.log('Cliente atualizado:', client.value)
     
     loading.value = false
   } catch (err) {

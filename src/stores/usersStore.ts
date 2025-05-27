@@ -28,7 +28,6 @@ export const useUsersStore = defineStore('users', () => {
     error.value = null
     
     try {
-      console.log('Store: Fetching users...', { page, itemsPerPage, filters })
       
       // Se filtros foram fornecidos, atualize os filtros ativos
       if (filters) {
@@ -70,7 +69,6 @@ export const useUsersStore = defineStore('users', () => {
       
       const response = await usersService.getUsers(params)
       
-      console.log('Store: Received paginated response:', response)
       
       // Extract data and pagination info
       if (response && response.data) {
@@ -89,7 +87,6 @@ export const useUsersStore = defineStore('users', () => {
           paginationLinks.value = response.links
         }
         
-        console.log('Store: Updated users and pagination info')
       } else {
         console.error('Store: Unexpected response format:', response)
       }

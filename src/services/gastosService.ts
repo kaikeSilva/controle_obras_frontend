@@ -24,17 +24,12 @@ export async function getGastos(params: GetGastosParams = {}): Promise<Paginated
 
 export async function getGastoById(id: number): Promise<Gasto> {
   try {
-    console.log(`Buscando gasto com ID: ${id}`);
     const response = await api.get(`/gastos/${id}`);
-    console.log('Resposta completa da API:', response);
     
-    // O backend retorna { data: { ...gasto } }
     if (response.data && response.data.data) {
-      console.log('Dados do gasto encontrados:', response.data.data);
       return response.data;
     }
     
-    console.log('Formato de resposta diferente do esperado:', response.data);
     return response.data;
   } catch (error: any) {
     console.error(`Erro ao buscar gasto com ID ${id}:`, error);

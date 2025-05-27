@@ -108,7 +108,6 @@ const isMobile = ref(window.innerWidth < 768)
 // Se obraId for fornecido, adiciona ao filtro inicial
 if (props.obraId) {
   filters.value.obra_id = props.obraId
-  console.log('Filtro inicial com obra_id:', filters.value)
 }
 
 // Computed
@@ -126,7 +125,6 @@ onMounted(() => {
   // Garantir que o filtro de obra_id seja aplicado ao carregar os gastos
   if (props.obraId) {
     gastosStore.setFilters({ obra_id: props.obraId });
-    console.log('Definindo filtro de obra_id no store:', props.obraId);
   }
   loadGastos();
   window.addEventListener('resize', checkMobileView);
@@ -143,8 +141,6 @@ async function loadGastos(page = 1) {
   if (props.obraId && !requestFilters.obra_id) {
     requestFilters.obra_id = props.obraId
   }
-  
-  console.log('Carregando gastos com filtros:', requestFilters)
   
   await gastosStore.fetchGastos({
     page,

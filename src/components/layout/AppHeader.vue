@@ -1,10 +1,12 @@
 <template>
   <header class="app-header">
-    <button class="menu-toggle" @click="handleMenuToggle">
+    <button class="menu-toggle" 
+    @click="handleMenuToggle">
       <IconBars :size="24" />
     </button>
     
     <div class="header-title">
+      {{ currentContext?.name }}
     </div>
     
     <div class="header-actions">
@@ -32,8 +34,14 @@ import IconSun from '@/components/icons/IconSun.vue'
 import IconMoon from '@/components/icons/IconMoon.vue'
 import IconSignOut from '@/components/icons/IconSignOut.vue'
 import IconSupport from '@/components/icons/IconSupport.vue'
+import { useBreadcrumbStore } from '@/stores/breadcrumbStore'
+import { storeToRefs } from 'pinia'
+
 const layoutStore = useLayoutStore()
 const userStore = useUserStore()
+const breadcrumbStore = useBreadcrumbStore()
+
+const { currentContext } = storeToRefs(breadcrumbStore)
 
 function handleMenuToggle() {
   if (window.innerWidth <= 768) {
@@ -56,15 +64,28 @@ function handleMenuToggle() {
   padding: 0 1rem;
   box-shadow: $shadow-sm;
   position: fixed;
+  width: calc(100% - $sidebar-width);
   top: 0;
   right: 0;
-  left: 0;
+  left: $sidebar-width;
   z-index: 100;
-  
+  .menu-toggle {
+    display: none;
+  }
   @include dark-mode {
     background: #1e1e1e;
     color: white;
   }
+
+  @include mobile-only {
+    left: 0;
+    width: 100%;
+
+    .menu-toggle {
+      display: block;
+    }
+  }
+
 }
 
 .menu-toggle,

@@ -47,7 +47,6 @@ const error = computed(() => {
 
 // Métodos
 const handleFontePagadoraChange = (value: number | string) => {
-  console.log('Fonte Pagadora selecionada:', value)
 }
 
 const getSelectedFontePagadoraName = () => {

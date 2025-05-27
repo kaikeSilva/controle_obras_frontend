@@ -28,7 +28,6 @@ export const useClientsStore = defineStore('clients', () => {
     error.value = null
     
     try {
-      console.log('Store: Fetching clients...', { page, itemsPerPage, filters })
       
       // Se filtros foram fornecidos, atualize os filtros ativos
       if (filters) {
@@ -70,13 +69,9 @@ export const useClientsStore = defineStore('clients', () => {
       
       const response = await clientsService.getClients(params)
       
-      console.log('Store: Received paginated response:', response)
-      
-      // Extract data and pagination info
       if (response && response.data) {
         clients.value = response.data
         
-        // Update pagination state
         if (response.meta) {
           currentPage.value = response.meta.current_page
           lastPage.value = response.meta.last_page
@@ -84,12 +79,9 @@ export const useClientsStore = defineStore('clients', () => {
           total.value = response.meta.total
         }
         
-        // Update pagination links
         if (response.links) {
           paginationLinks.value = response.links
         }
-        
-        console.log('Store: Updated clients and pagination info')
       } else {
         console.error('Store: Unexpected response format:', response)
       }

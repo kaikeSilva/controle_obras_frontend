@@ -7,8 +7,6 @@ export const useBreadcrumbStore = defineStore('breadcrumb', () => {
   const currentContext = ref<BreadcrumbItem | null>(null)
 
   const buildPath = (route: string, routeMeta: any) => {
-    console.log("dentro de buildpath", routeMeta, route)
-    
     // Verificar se a rota está no navigationStack
     const index = navigationStack.value.findIndex(item => item.route === route)
     

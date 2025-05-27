@@ -178,7 +178,6 @@ function updateChart() {
       // Atualizar o gráfico
       chartInstance.update()
       
-      console.log('Gráfico atualizado com dados:', props.chartData)
     } else {
       console.warn('Dados incompletos para atualizar o gráfico:', props.chartData)
     }

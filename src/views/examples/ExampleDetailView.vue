@@ -128,26 +128,22 @@ const mockItemData: ExampleItem = {
 };
 
 onMounted(() => {
-  console.log('[ExampleDetailView] Mounting component and mocking data...');
   loading.value = true;
   error.value = null;
   setTimeout(() => {
     item.value = mockItemData;
     loading.value = false;
-    console.log('[ExampleDetailView] Mock data loaded:', item.value);
   }, 1000); 
 });
 
 const handleEdit = () => {
   if (item.value?.id) {
-    console.log(`[ExampleDetailView] Edit button clicked for item ID: ${item.value.id}`);
     notificationStore.addNotification(`Ação 'Editar' para o item '${item.value.nome}'.`, 'info');
   }
 };
 
 const handleDelete = async () => {
   if (!item.value?.id) return;
-  console.log(`[ExampleDetailView] Delete button clicked for item ID: ${item.value.id}`);
   notificationStore.addNotification(
     `Item '${item.value?.nome}' excluído (simulação)!`,
     'success'

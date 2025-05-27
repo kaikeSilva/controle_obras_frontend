@@ -132,13 +132,6 @@ import { useRouter, useRoute } from 'vue-router'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { useGastosStore } from '@/stores/gastosStore'
 import type { GastoForm, Gasto } from '@/types/gasto.types'
-// import { useBreadcrumbStore } from '@/stores/breadcrumbStore'
-// Mock do breadcrumbStore para ser implementado posteriormente
-const mockBreadcrumbStore = {
-  setObraId: (id: number) => console.log('Mock: setObraId chamado com id:', id),
-  setActiveTab: (tab: string) => console.log('Mock: setActiveTab chamado com tab:', tab),
-  setClienteId: (id: number) => console.log('Mock: setClienteId chamado com id:', id)
-}
 import Multiselect from '@vueform/multiselect'
 import '@vueform/multiselect/themes/default.css'
 import { obrasAutocompleteService, type ObraAutocomplete } from '@/services/obrasAutocompleteService'
@@ -151,8 +144,6 @@ const router = useRouter()
 const route = useRoute()
 const gastosStore = useGastosStore()
 const notificationStore = useNotificationStore()
-// const breadcrumbStore = useBreadcrumbStore()
-const breadcrumbStore = mockBreadcrumbStore
 const loading = ref(false)
 const errors = reactive<Record<string, string>>({})
 
@@ -190,16 +181,13 @@ watch(() => props.obraId, (val) => { if (!isEditMode.value && val) form.obra_id 
 
 // Método para buscar obras para o autocomplete
 async function searchObras(search: string) {
-  console.log('Buscando obras para autocomplete, termo:', search)
   try {
     const obrasList = await obrasAutocompleteService.getObrasAutocomplete()
-    console.log('Obras recebidas:', obrasList)
     obras.value = obrasList
     obrasOptions.value = obrasList.map(obra => ({
       id: obra.id,
       nome: obra.nome
     }))
-    console.log('obrasOptions atualizado:', obrasOptions.value)
     
     // Se temos um obra_id mas não temos o objeto obra selecionado, encontre-o na lista
     if (form.obra_id && !selectedObra.value) {
@@ -212,7 +200,6 @@ async function searchObras(search: string) {
 
 // Método para lidar com a mudança de obra selecionada
 function handleObraChange(obraId: number | null) {
-  console.log('handleObraChange chamado com:', obraId);
   if (obraId) {
     form.obra_id = obraId;
     delete errors.obra_id;
@@ -223,16 +210,13 @@ function handleObraChange(obraId: number | null) {
 
 // Método para buscar categorias de gastos para o autocomplete
 async function searchCategoriasGastos(search: string) {
-  console.log('Buscando categorias de gastos para autocomplete, termo:', search)
   try {
     const categoriasList = await categoriasGastosAutocompleteService.getCategoriasGastosAutocomplete()
-    console.log('Categorias recebidas:', categoriasList)
     categoriasGastos.value = categoriasList
     categoriasGastosOptions.value = categoriasList.map(categoria => ({
       id: categoria.id,
       nome: categoria.nome
     }))
-    console.log('categoriasGastosOptions atualizado:', categoriasGastosOptions.value)
     
     // Se temos um categoria_gasto_id mas não temos o objeto categoria selecionado, encontre-o na lista
     if (form.categoria_gasto_id && !selectedCategoriaGasto.value) {
@@ -245,7 +229,6 @@ async function searchCategoriasGastos(search: string) {
 
 // Método para lidar com a mudança de categoria de gasto selecionada
 function handleCategoriaGastoChange(categoriaId: number | null) {
-  console.log('handleCategoriaGastoChange chamado com:', categoriaId);
   if (categoriaId) {
     form.categoria_gasto_id = categoriaId;
     delete errors.categoria_gasto_id;
@@ -256,16 +239,13 @@ function handleCategoriaGastoChange(categoriaId: number | null) {
 
 // Método para buscar fontes pagadoras para o autocomplete
 async function searchFontesPagadoras(search: string) {
-  console.log('Buscando fontes pagadoras para autocomplete, termo:', search)
   try {
     const fontesList = await fontesPagadorasAutocompleteService.getFontesPagadorasAutocomplete()
-    console.log('Fontes pagadoras recebidas:', fontesList)
     fontesPagadoras.value = fontesList
     fontesPagadorasOptions.value = fontesList.map(fonte => ({
       id: fonte.id,
       nome: fonte.nome
     }))
-    console.log('fontesPagadorasOptions atualizado:', fontesPagadorasOptions.value)
     
     // Se temos um fonte_pagadora_id mas não temos o objeto fonte selecionado, encontre-o na lista
     if (form.fonte_pagadora_id && !selectedFontePagadora.value) {
@@ -278,7 +258,6 @@ async function searchFontesPagadoras(search: string) {
 
 // Método para lidar com a mudança de fonte pagadora selecionada
 function handleFontePagadoraChange(fonteId: number | null) {
-  console.log('handleFontePagadoraChange chamado com:', fonteId);
   if (fonteId) {
     form.fonte_pagadora_id = fonteId;
     delete errors.fonte_pagadora_id;
@@ -295,37 +274,20 @@ onMounted(async () => {
     searchFontesPagadoras('')
   ])
   
-  // Mock das funções de breadcrumb
-  if (form.obra_id) breadcrumbStore.setObraId(form.obra_id)
-  breadcrumbStore.setActiveTab('gasto')
-
   if (isEditMode.value && route.params.id) {
     loading.value = true
     try {
       const response = await gastosStore.fetchGasto(Number(route.params.id))
-      console.log('Resposta da API ao buscar gasto:', JSON.stringify(response, null, 2))
       
       // Verifica se a resposta tem o formato esperado
       if (response) {
         // Se a resposta for { data: { ...gasto } }
         if (response.data) {
-          console.log('Usando gasto dentro de data:', response.data)
           populateForm(response.data)
-          if (response.data.obra_id) {
-            // Mock da função de breadcrumb
-            breadcrumbStore.setObraId(response.data.obra_id);
-          }
         } else {
-          // Se a resposta for o próprio objeto gasto
-          console.log('Usando gasto diretamente:', response)
           populateForm(response)
-          if (response.obra_id) {
-            // Mock da função de breadcrumb
-            breadcrumbStore.setObraId(response.obra_id);
-          }
         }
       } else {
-        console.error('Resposta da API não contém dados do gasto')
         notificationStore.addNotification('Não foi possível carregar os dados do gasto!', 'error')
       }
     } catch (error) {
@@ -338,8 +300,6 @@ onMounted(async () => {
 })
 
 function populateForm(gasto: Gasto) {
-  console.log('PopulateForm chamado com:', JSON.stringify(gasto, null, 2));
-  
   form.obra_id = gasto.obra_id
   form.categoria_gasto_id = gasto.categoria_gasto_id
   form.fonte_pagadora_id = gasto.fonte_pagadora_id
@@ -353,8 +313,6 @@ function populateForm(gasto: Gasto) {
   
   // Se temos a obra completa nos dados, vamos adicioná-la às opções
   if (gasto.obra) {
-    console.log('Adicionando obra do gasto às opções:', gasto.obra);
-    
     // Adicione à lista de opções se ainda não estiver lá
     if (!obrasOptions.value.some(o => o.id === gasto.obra.id)) {
       obrasOptions.value.push({
@@ -369,8 +327,6 @@ function populateForm(gasto: Gasto) {
   
   // Se temos a categoria completa nos dados, vamos adicioná-la às opções
   if (gasto.categoria_gasto) {
-    console.log('Adicionando categoria do gasto às opções:', gasto.categoria_gasto);
-    
     // Adicione à lista de opções se ainda não estiver lá
     if (!categoriasGastosOptions.value.some(c => c.id === gasto.categoria_gasto.id)) {
       categoriasGastosOptions.value.push({
@@ -385,8 +341,6 @@ function populateForm(gasto: Gasto) {
   
   // Se temos a fonte pagadora completa nos dados, vamos adicioná-la às opções
   if (gasto.fonte_pagadora) {
-    console.log('Adicionando fonte pagadora do gasto às opções:', gasto.fonte_pagadora);
-    
     // Adicione à lista de opções se ainda não estiver lá
     if (!fontesPagadorasOptions.value.some(f => f.id === gasto.fonte_pagadora.id)) {
       fontesPagadorasOptions.value.push({

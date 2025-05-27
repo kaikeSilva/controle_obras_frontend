@@ -160,35 +160,28 @@ onMounted(async () => {
   }
   
   const entradaRecursoId = Number(route.params.id);
-  console.log('[EntradaRecursoDetailsView] entradaRecursoId from route params:', entradaRecursoId);
 
   if (isNaN(entradaRecursoId)) {
     error.value = 'ID da entrada de recurso inválido.';
     loading.value = false;
-    console.error('[EntradaRecursoDetailsView] Invalid entradaRecursoId:', route.params.id);
     return;
   }
 
   try {
-    console.log('[EntradaRecursoDetailsView] Fetching entrada de recurso with ID:', entradaRecursoId);
     const apiResponse = await entradaRecursoStore.fetchEntradaRecursoById(entradaRecursoId); 
-    console.log('[EntradaRecursoDetailsView] API response for entrada de recurso:', apiResponse); 
 
     // A resposta já está sendo processada corretamente no service e retornando o objeto dentro de data
     if (apiResponse) { 
       entradaRecurso.value = apiResponse; 
-      console.log('[EntradaRecursoDetailsView] entradaRecurso.value after assignment:', entradaRecurso.value);
 
       // Atualizar breadcrumb para navegação - mockado para evitar erros
       try {
         if (entradaRecurso.value && entradaRecurso.value.obra_id) { 
           // Apenas definir a aba ativa, já que setObraId não existe
           breadcrumbStore.setActiveTab('entradas-recursos'); 
-          console.log('[EntradaRecursoDetailsView] Breadcrumb tab set to entradas-recursos');
         }
       } catch (breadcrumbErr) {
         console.warn('[EntradaRecursoDetailsView] Non-critical breadcrumb error:', breadcrumbErr);
-        // Não propagar erro de breadcrumb, pois não é crítico para a funcionalidade principal
       }
     } else {
       error.value = 'Entrada de recurso não encontrada ou formato de dados inesperado.';

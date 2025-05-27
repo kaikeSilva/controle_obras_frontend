@@ -29,11 +29,7 @@ export const useFontesPagadorasStore = defineStore('fontesPagadoras', () => {
     error.value = null
     
     try {
-      console.log('Store: Fetching fontes pagadoras...', { page, itemsPerPage, filters, clienteId })
-      
-      // Se filtros foram fornecidos, atualize os filtros ativos
       if (filters) {
-        // Limpar filtros ativos anteriores
         Object.keys(activeFilters).forEach(key => {
           delete activeFilters[key]
         })
@@ -79,13 +75,9 @@ export const useFontesPagadorasStore = defineStore('fontesPagadoras', () => {
       
       const response = await fontesPagadorasService.getFontesPagadoras(params)
       
-      console.log('Store: Received paginated response:', response)
-      
-      // Extract data and pagination info
       if (response && response.data) {
         fontesPagadoras.value = response.data
         
-        // Update pagination state
         if (response.meta) {
           currentPage.value = response.meta.current_page
           lastPage.value = response.meta.last_page
@@ -93,12 +85,9 @@ export const useFontesPagadorasStore = defineStore('fontesPagadoras', () => {
           total.value = response.meta.total
         }
         
-        // Update pagination links
         if (response.links) {
           paginationLinks.value = response.links
         }
-        
-        console.log('Store: Updated fontes pagadoras and pagination info')
       } else {
         console.error('Store: Unexpected response format:', response)
       }
@@ -111,12 +100,10 @@ export const useFontesPagadorasStore = defineStore('fontesPagadoras', () => {
   }
 
   const clearFilters = async (clienteId?: number) => {
-    // Limpar filtros ativos
     Object.keys(activeFilters).forEach(key => {
       delete activeFilters[key]
     })
     
-    // Recarregar fontes pagadoras sem filtros
     await fetchFontesPagadoras(1, perPage.value, undefined, undefined, clienteId)
   }
 
@@ -127,7 +114,6 @@ export const useFontesPagadorasStore = defineStore('fontesPagadoras', () => {
     try {
       const response = await fontesPagadorasService.createFontePagadora(fontePagadoraData)
       
-      // Recarregar a lista para refletir a nova fonte pagadora
       const clienteId = fontePagadoraData.cliente_id
       await fetchFontesPagadoras(currentPage.value, perPage.value, undefined, undefined, clienteId)
       
@@ -148,7 +134,6 @@ export const useFontesPagadorasStore = defineStore('fontesPagadoras', () => {
     try {
       const response = await fontesPagadorasService.updateFontePagadora(id, fontePagadoraData)
       
-      // Recarregar a lista para refletir as alterações
       const clienteId = fontePagadoraData.cliente_id
       await fetchFontesPagadoras(currentPage.value, perPage.value, undefined, undefined, clienteId)
       

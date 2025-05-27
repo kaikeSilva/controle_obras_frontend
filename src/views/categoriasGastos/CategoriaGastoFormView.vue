@@ -113,17 +113,13 @@ const breadcrumbStore = useBreadcrumbStore()
 
 // Método para buscar clientes para o autocomplete
 async function searchClientes(search: string) {
-  console.log('Buscando clientes para autocomplete, termo:', search)
   try {
-    console.log('Chamando clientsService.getClientesAutocomplete()')
     const clientesList = await clientsService.getClientesAutocomplete()
-    console.log('Clientes recebidos:', clientesList)
     clientes.value = clientesList
     clientesOptions.value = clientesList.map(cliente => ({
       id: cliente.id,
       nome: cliente.nome
     }))
-    console.log('clientesOptions atualizado:', clientesOptions.value)
     
     // Se temos um cliente_id mas não temos o objeto cliente selecionado, encontre-o na lista
     if (form.cliente_id && !selectedCliente.value) {

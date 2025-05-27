@@ -119,16 +119,11 @@ const form = reactive<ObraForm>({
   status: 'em_andamento',
   ativo: true
 })
-console.log('[ObraFormView] cliente_id recebido:', props.clienteId, '| route.params.cliente_id:', route.params.cliente_id, '| form.cliente_id:', form.cliente_id)
+
 // Se prop mudar depois, atualiza também
 watch(() => props.clienteId, (val) => { if (!isEditMode.value) form.cliente_id = val })
 
-import { useBreadcrumbStore } from '@/stores/breadcrumbStore'
-const breadcrumbStore = useBreadcrumbStore()
-
 onMounted(async () => {
-  breadcrumbStore.setActiveTab('obra')
-
   if (isEditMode.value && route.params.id) {
     loading.value = true
     try {

@@ -227,7 +227,6 @@ const updatePhone = (event: Event) => {
   // Atualizar o valor do telefone no modelo
   const input = event.target as HTMLInputElement
   form.phone = input.value
-  console.log('Telefone atualizado:', form.phone)
 }
 </script>
 

@@ -146,19 +146,15 @@ const handleDelete = async () => {
 onMounted(async () => {
   try {
     const userId = parseInt(route.params.id as string)
-    console.log('ID do usuário:', userId)
     
     if (isNaN(userId)) {
       throw new Error('ID do usuário inválido')
     }
     
     // Buscar os dados do usuário
-    console.log('Buscando dados do usuário...')
     const response = await usersService.getUserById(userId)
-    console.log('Dados recebidos:', response)
     
     user.value = response
-    console.log('Usuário atualizado:', user.value)
     
     loading.value = false
   } catch (err) {

@@ -39,10 +39,6 @@ import Pusher from 'pusher-js';
 // Make Pusher available globally for Echo
 (window as any).Pusher = Pusher;
 
-// Verificar se Pusher foi carregado corretamente
-console.log('Pusher loaded:', typeof Pusher);
-console.log('Window.Pusher:', typeof (window as any).Pusher);
-
 // Define the Transport type based on Pusher's expected values
 type PusherTransport = 'ws' | 'wss' | 'xhr_streaming' | 'xhr_polling' | 'sockjs';
 
@@ -95,7 +91,6 @@ export default defineComponent({
 
     const logEvent = (message: string) => {
       const timestamp = new Date().toLocaleTimeString();
-      console.log(`[${timestamp}] ${message}`);
       eventLog.value.push(`[${timestamp}] ${message}`);
     };
 

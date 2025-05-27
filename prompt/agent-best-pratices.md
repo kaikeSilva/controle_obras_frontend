@@ -257,8 +257,6 @@ docker compose exec vue-app npm install -D @types/package-name
 // ERROR: Property 'value' does not exist
 // SOLUTION: Check if using .value on refs correctly
 const count = ref(0)
-console.log(count.value) // Correct
-console.log(count) // Wrong in script
 
 // ERROR: Type 'string' is not assignable to type 'number'
 // SOLUTION: Fix the type

@@ -73,7 +73,6 @@ const filteredData = computed(() => {
 
 // Funções para lidar com os eventos de filtro
 async function handleFilterApplied(filters: DashboardFiltros) {
-  console.log('Filtros aplicados:', filters)
   
   // Converter os filtros do componente para o formato esperado pela API
   const dashboardFiltros: DashboardFiltros = {
@@ -107,7 +106,6 @@ async function handleFilterApplied(filters: DashboardFiltros) {
 }
 
 async function handleFilterCleared() {
-  console.log('Filtros limpos')
   
   // Resetar os filtros na store e buscar os dados originais
   dashboardStore.resetFiltros()

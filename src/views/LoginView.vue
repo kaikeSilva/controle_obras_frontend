@@ -58,7 +58,6 @@ const handleSubmit = async () => {
     })
     
     if (result.success) {
-      console.log('Login realizado com sucesso!')
       router.push('/')
     } else {
       errorMessage.value = 'Email ou senha incorretos'

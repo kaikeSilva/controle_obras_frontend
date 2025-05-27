@@ -113,7 +113,6 @@ import IconTrash from '@/components/icons/IconTrash.vue'
 import ConfirmationModal from '@/components/common/ConfirmationModal.vue'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { formatDate, formatCurrency } from '@/utils/formatters'
-import { useBreadcrumbStore } from '@/stores/breadcrumbStore'
 import GastosCrud from '@/components/gastos/GastosCrud.vue'
 import EntradaRecursoCrud from '@/components/entradaRecurso/EntradaRecursoCrud.vue'
 
@@ -121,7 +120,6 @@ const route = useRoute()
 const router = useRouter()
 const obrasStore = useObrasStore()
 const notificationStore = useNotificationStore()
-const breadcrumbStore = useBreadcrumbStore()
 
 const obra = ref<Obra | null>(null)
 const loading = ref(true)
@@ -146,23 +144,17 @@ onMounted(async () => {
   }
   
   const obraId = Number(route.params.id);
-  console.log('[ObraDetailsView] obraId from route params:', obraId);
-
   if (isNaN(obraId)) {
     error.value = 'ID da obra inválido.';
     loading.value = false;
-    console.error('[ObraDetailsView] Invalid obraId:', route.params.id);
     return;
   }
 
   try {
-    console.log('[ObraDetailsView] Fetching obra with ID:', obraId);
     const apiResponse = await obrasStore.fetchObra(obraId); 
-    console.log('[ObraDetailsView] API response for obra:', apiResponse); 
 
     if (apiResponse && apiResponse.data) { 
       obra.value = apiResponse.data; 
-      console.log('[ObraDetailsView] obra.value after assignment:', obra.value);
     } else {
       error.value = 'Obra não encontrada ou formato de dados inesperado.';
       console.warn('[ObraDetailsView] Obra data not found or malformed in API response for ID:', obraId, apiResponse);
@@ -189,7 +181,6 @@ const handleDelete = async () => {
       `Obra ${obra.value?.nome} excluída com sucesso!`,
       'success'
     )
-    // Tenta voltar para a tela de detalhes do cliente se currentClienteId estiver definido
     if (breadcrumbStore.currentClienteId) {
       router.push({ 
         name: 'client-details', 
@@ -197,8 +188,6 @@ const handleDelete = async () => {
         query: { active_tab: 'obras' } 
       });
     } else {
-      // Fallback para uma lista geral de obras ou home, se não houver cliente associado
-      // ou se a navegação direta para obras for preferida.
       router.push({ name: 'home' }) 
     }
   } catch (err: any) {

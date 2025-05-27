@@ -21,10 +21,8 @@ interface GetClientsParams {
 export const clientsService = {
   async getClients(params: GetClientsParams = {}): Promise<PaginatedResponse<Client>> {
     try {
-      console.log('Fetching clients from API with params:', params)
       const response = await api.get('/clients', { params })
       
-      console.log('Client data received:', response.data)
       return response.data
     } catch (error) {
       console.error('Error fetching clients:', error)
@@ -34,7 +32,6 @@ export const clientsService = {
   
   async getClientById(id: number): Promise<Client> {
     try {
-      console.log(`Buscando cliente com ID: ${id}`)
       const response = await api.get(`/clients/${id}`)
       
       // A API retorna os dados dentro de um objeto 'data'
@@ -51,10 +48,8 @@ export const clientsService = {
   
   async createClient(clientData: Partial<Client>): Promise<Client> {
     try {
-      console.log('Creating new client:', clientData)
       const response = await api.post('/clients', clientData)
       
-      console.log('Client created:', response.data)
       return response.data
     } catch (error) {
       console.error('Error creating client:', error)
@@ -64,16 +59,13 @@ export const clientsService = {
   
   async updateClient(id: number, clientData: Partial<Client>): Promise<Client> {
     try {
-      console.log(`Updating client with ID ${id}:`, clientData)
       const response = await api.put(`/clients/${id}`, clientData)
       
       // A API retorna os dados dentro de um objeto 'data'
       if (response.data && response.data.data) {
-        console.log('Client updated:', response.data.data)
         return response.data.data
       }
       
-      console.log('Client updated:', response.data)
       return response.data
     } catch (error) {
       console.error(`Error updating client with ID ${id}:`, error)
@@ -83,10 +75,7 @@ export const clientsService = {
   
   async deleteClient(id: number): Promise<void> {
     try {
-      console.log(`Deleting client with ID: ${id}`)
       await api.delete(`/clients/${id}`)
-      
-      console.log('Client deleted successfully')
     } catch (error) {
       console.error(`Error deleting client with ID ${id}:`, error)
       throw error
@@ -98,9 +87,7 @@ export const clientsService = {
    */
   async getClientesAutocomplete(): Promise<Cliente[]> {
     try {
-      console.log('Chamando API endpoint: /autocomplete/clientes')
       const response = await api.get<ClientesResponse>('/autocomplete/clientes')
-      console.log('Resposta da API de autocomplete:', response)
       return response.data.data || []
     } catch (error) {
       console.error('Erro ao buscar clientes para autocomplete:', error)

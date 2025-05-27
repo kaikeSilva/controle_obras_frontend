@@ -228,16 +228,13 @@ function clearFilters() {
 
 // Método para buscar obras para o autocomplete
 async function searchObras(search: string) {
-  console.log('Buscando obras para autocomplete, termo:', search)
   try {
     const obrasList = await obrasAutocompleteService.getObrasAutocomplete()
-    console.log('Obras recebidas:', obrasList)
     obras.value = obrasList
     obrasOptions.value = obrasList.map(obra => ({
       id: obra.id,
       nome: obra.nome
     }))
-    console.log('obrasOptions atualizado:', obrasOptions.value)
     
     // Se temos um obra_id mas não temos o objeto obra selecionado, encontre-o na lista
     if (filterState.obra_id && !selectedObra.value) {
@@ -250,22 +247,18 @@ async function searchObras(search: string) {
 
 // Método para lidar com a mudança de obra selecionada
 function handleObraChange(obraId: number | null) {
-  console.log('handleObraChange chamado com:', obraId);
   filterState.obra_id = obraId || undefined;
 }
 
 // Método para buscar categorias de gastos para o autocomplete
 async function searchCategoriasGastos(search: string) {
-  console.log('Buscando categorias de gastos para autocomplete, termo:', search)
   try {
     const categoriasList = await categoriasGastosAutocompleteService.getCategoriasGastosAutocomplete()
-    console.log('Categorias recebidas:', categoriasList)
     categoriasGastos.value = categoriasList
     categoriasGastosOptions.value = categoriasList.map(categoria => ({
       id: categoria.id,
       nome: categoria.nome
     }))
-    console.log('categoriasGastosOptions atualizado:', categoriasGastosOptions.value)
     
     // Se temos um categoria_gasto_id mas não temos o objeto categoria selecionado, encontre-o na lista
     if (filterState.categoria_gasto_id && !selectedCategoriaGasto.value) {
@@ -278,22 +271,18 @@ async function searchCategoriasGastos(search: string) {
 
 // Método para lidar com a mudança de categoria de gasto selecionada
 function handleCategoriaGastoChange(categoriaId: number | null) {
-  console.log('handleCategoriaGastoChange chamado com:', categoriaId);
   filterState.categoria_gasto_id = categoriaId || undefined;
 }
 
 // Método para buscar fontes pagadoras para o autocomplete
 async function searchFontesPagadoras(search: string) {
-  console.log('Buscando fontes pagadoras para autocomplete, termo:', search)
   try {
     const fontesList = await fontesPagadorasAutocompleteService.getFontesPagadorasAutocomplete()
-    console.log('Fontes pagadoras recebidas:', fontesList)
     fontesPagadoras.value = fontesList
     fontesPagadorasOptions.value = fontesList.map(fonte => ({
       id: fonte.id,
       nome: fonte.nome
     }))
-    console.log('fontesPagadorasOptions atualizado:', fontesPagadorasOptions.value)
     
     // Se temos um fonte_pagadora_id mas não temos o objeto fonte selecionado, encontre-o na lista
     if (filterState.fonte_pagadora_id && !selectedFontePagadora.value) {
@@ -306,7 +295,6 @@ async function searchFontesPagadoras(search: string) {
 
 // Método para lidar com a mudança de fonte pagadora selecionada
 function handleFontePagadoraChange(fonteId: number | null) {
-  console.log('handleFontePagadoraChange chamado com:', fonteId);
   filterState.fonte_pagadora_id = fonteId || undefined;
 }
 onMounted(async () => {
