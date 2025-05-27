@@ -20,7 +20,8 @@ const router = createRouter({
       meta: { 
         name: 'home',
         requiresAuth: true,
-        breadcrumb: "Clientes"
+        breadcrumb: "Clientes",
+        description: "Gerencie seus clientes aqui"
       },
       children: [
         {
@@ -37,7 +38,7 @@ const router = createRouter({
           component: () => import('../views/dashboard/DashboardView.vue'),
           meta: {
             title: 'Dashboard',
-            description: 'Bem-vindo ao painel administrativo!',
+            description: 'Informações do seu negócio',
             breadcrumb: "Dashboard"
           }
         },
@@ -47,6 +48,7 @@ const router = createRouter({
           component: () => import('../views/obras/ObrasView.vue'),
           meta: {
             title: 'Obras',
+            description: 'Gerencie suas obras aqui',
             breadcrumb: "Obras"
           }
         },
@@ -56,6 +58,7 @@ const router = createRouter({
           component: () => import('../views/gastos/GastosView.vue'),
           meta: {
             title: 'Gastos',
+            description: 'Gerencie seus gastos aqui',
             breadcrumb: "Gastos"
           }
         },
@@ -66,6 +69,7 @@ const router = createRouter({
           props: route => ({ obraId: route.params.obra_id ? Number(route.params.obra_id) : null }),
           meta: {
             title: 'Novo Gasto',
+            description: 'Crie um novo gasto aqui',
             breadcrumb: "Novo Gasto"
           }
         },
@@ -75,6 +79,7 @@ const router = createRouter({
           component: () => import('../views/gastos/GastoFormView.vue'),
           meta: {
             title: 'Editar Gasto',
+            description: 'Edite um gasto aqui',
             breadcrumb: "Editar Gasto",
             requiresAuth: true
           }
@@ -85,6 +90,7 @@ const router = createRouter({
           component: () => import('../views/categoriasGastos/CategoriasGastosView.vue'),
           meta: {
             title: 'Categorias de Gastos',
+            description: 'Gerencie suas categorias de gastos aqui',
             breadcrumb: "Categorias de Gastos"
           }
         },
@@ -95,6 +101,7 @@ const router = createRouter({
           props: route => ({ clienteId: route.params.cliente_id ? Number(route.params.cliente_id) : null }),
           meta: {
             title: 'Nova Obra',
+            description: 'Crie uma nova obra aqui',
             breadcrumb: "Nova Obra"
           }
         },
@@ -104,6 +111,7 @@ const router = createRouter({
           component: () => import('../views/obras/ObraFormView.vue'),
           meta: {
             title: 'Editar Obra',
+            description: 'Edite uma obra aqui',
             breadcrumb: "Editar Obra",
             requiresAuth: true
           }
@@ -114,6 +122,7 @@ const router = createRouter({
           component: () => import('@/views/obras/ObraDetailsView.vue'),
           meta: {
             title: 'Detalhes da Obra',
+            description: 'Veja os detalhes de uma obra aqui',
             breadcrumb: "Detalhes da Obra",
             requiresAuth: true
           }
@@ -125,6 +134,7 @@ const router = createRouter({
           props: route => ({ clienteId: route.params.cliente_id ? Number(route.params.cliente_id) : null }),
           meta: {
             title: 'Nova Categoria de Gasto',
+            description: 'Crie uma nova categoria de gasto aqui',
             breadcrumb: "Nova Categoria de Gasto"
           }
         },
@@ -134,6 +144,7 @@ const router = createRouter({
           component: () => import('@/views/categoriasGastos/CategoriaGastoFormView.vue'),
           meta: {
             title: 'Editar Categoria de Gasto',
+            description: 'Edite uma categoria de gasto aqui',
             breadcrumb: "Editar Categoria de Gasto",
             requiresAuth: true
           }
@@ -142,13 +153,13 @@ const router = createRouter({
           path: 'clientes',
           name: 'clients',
           component: ClientsView,
-          meta: { title: 'Clientes', breadcrumb: "Clientes" }
+          meta: { title: 'Clientes', breadcrumb: "Clientes", description: 'Gerencie seus clientes aqui' }
         },
         {
           path: 'clientes/novo',
           name: 'new-client',
           component: () => import('../views/clients/ClientFormView.vue'),
-          meta: { title: 'Novo Cliente', breadcrumb: "Novo Cliente" }
+          meta: { title: 'Novo Cliente', breadcrumb: "Novo Cliente", description: 'Crie um novo cliente aqui' }
         },
         {
           path: 'clientes/:id/editar',
@@ -156,6 +167,7 @@ const router = createRouter({
           component: () => import('../views/clients/ClientFormView.vue'),
           meta: { 
             title: 'Editar Cliente',
+            description: 'Edite um cliente aqui',
             breadcrumb: "Editar Cliente",
             parent: 'clients'
           }
@@ -166,6 +178,7 @@ const router = createRouter({
           component: () => import('../views/clients/ClientDetailsView.vue'),
           meta: { 
             title: 'Detalhes do Cliente',
+            description: 'Veja os detalhes de um cliente aqui',
             breadcrumb: "Detalhes do Cliente",
             parent: 'clients'
           }
@@ -174,13 +187,13 @@ const router = createRouter({
           path: 'usuarios',
           name: 'users',
           component: () => import('../views/usuarios/UsersView.vue'),
-          meta: { title: 'Usuários', breadcrumb: "Usuários" }
+          meta: { title: 'Usuários', breadcrumb: "Usuários", description: 'Gerencie seus usuários aqui' }
         },
         {
           path: 'usuarios/novo',
           name: 'new-user',
           component: () => import('../views/usuarios/UserFormView.vue'),
-          meta: { title: 'Novo Usuário', breadcrumb: "Novo Usuário" }
+          meta: { title: 'Novo Usuário', breadcrumb: "Novo Usuário", description: 'Crie um novo usuário aqui' }
         },
         {
           path: 'usuarios/:id/editar',
@@ -188,6 +201,7 @@ const router = createRouter({
           component: () => import('../views/usuarios/UserFormView.vue'),
           meta: { 
             title: 'Editar Usuário',
+            description: 'Edite um usuário aqui',
             breadcrumb: "Editar Usuário",
             parent: 'users'
           }
@@ -198,6 +212,7 @@ const router = createRouter({
           component: () => import('../views/usuarios/UserDetailsView.vue'),
           meta: { 
             title: 'Detalhes do Usuário',
+            description: 'Veja os detalhes de um usuário aqui',
             breadcrumb: "Detalhes do Usuário",
             parent: 'users'
           }
@@ -209,6 +224,7 @@ const router = createRouter({
           meta: {
             title: 'Exemplo Detalhes Base',
             breadcrumb: "Exemplo Detalhes Base",
+            description: 'Veja os detalhes de um exemplo aqui',
             requiresAuth: true
           }
         },
@@ -218,6 +234,7 @@ const router = createRouter({
           component: () => import('../views/entradaRecurso/EntradaRecursoView.vue'),
           meta: {
             title: 'Entrada de Recursos',
+            description: 'Gerencie suas entradas de recursos aqui',
             breadcrumb: "Entrada de Recursos",
             requiresAuth: true
           }
@@ -229,6 +246,7 @@ const router = createRouter({
           props: route => ({ obraId: route.params.obra_id ? Number(route.params.obra_id) : null }),
           meta: {
             title: 'Nova Entrada de Recurso',
+            description: 'Crie uma nova entrada de recurso aqui',
             breadcrumb: "Nova Entrada de Recurso",
             requiresAuth: true
           }
@@ -239,6 +257,7 @@ const router = createRouter({
           component: () => import('../views/entradaRecurso/EntradaRecursoFormView.vue'),
           meta: {
             title: 'Editar Entrada de Recurso',
+            description: 'Edite uma entrada de recurso aqui',
             breadcrumb: "Editar Entrada de Recurso",
             requiresAuth: true
           }
@@ -249,6 +268,7 @@ const router = createRouter({
           component: () => import('../views/entradaRecurso/EntradaRecursoDetailsView.vue'),
           meta: {
             title: 'Detalhes da Entrada de Recurso',
+            description: 'Veja os detalhes de uma entrada de recurso aqui',
             breadcrumb: "Detalhes da Entrada de Recurso",
             requiresAuth: true
           }
@@ -258,7 +278,7 @@ const router = createRouter({
     {
       path: '/about',
       name: 'about',
-      meta: { title: 'Sobre', breadcrumb: "Sobre" },
+      meta: { title: 'Sobre', breadcrumb: "Sobre", description: 'Veja os detalhes de um exemplo aqui' },
       component: () => import('../views/AboutView.vue')
     }
   ]
