@@ -60,19 +60,14 @@
                 @click="editCategoriaGasto(categoria)"
                 title="Editar"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-                  <path d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 01-.65-.65z" />
-                  <path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0010 3H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z" />
-                </svg>
+                <IconEdit size="16" />
               </button>
               <button 
                 class="action-button delete-button" 
                 @click="deleteCategoriaGasto(categoria)"
                 title="Excluir"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-                  <path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482A41.03 41.03 0 0014 4.193V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z" clip-rule="evenodd" />
-                </svg>
+                <IconDelete size="16" />
               </button>
             </div>
           </td>
@@ -104,19 +99,16 @@
               @click="editCategoriaGasto(categoria)"
               title="Editar"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-                <path d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 01-.65-.65z" />
-                <path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0010 3H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z" />
-              </svg>
+              <IconEdit size="20" />
+              <span>Editar</span>
             </button>
             <button 
               class="card-action-button delete-button" 
               @click="deleteCategoriaGasto(categoria)"
               title="Excluir"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-                <path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482A41.03 41.03 0 0014 4.193V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z" clip-rule="evenodd" />
-              </svg>
+              <IconDelete size="20" />
+              <span>Excluir</span>
             </button>
           </div>
         </div>
@@ -158,6 +150,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { CategoriaGasto } from '@/types/categoriaGasto.types'
+
+import IconEdit from '@/components/icons/IconEdit.vue';
+import IconDelete from '@/components/icons/IconDelete.vue';
 
 // Props
 const props = defineProps<{
@@ -250,7 +245,7 @@ const sortTable = (field: string) => {
   display: inline-block;
   width: 16px;
   height: 16px;
-  border-radius: 4px;
+  border-radius: 4px; // Assuming $border-radius or direct value
   margin-right: $spacing-xs;
   vertical-align: middle;
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -276,44 +271,89 @@ const sortTable = (field: string) => {
 
 .action-buttons {
   display: flex;
-  gap: $spacing-xs;
+  gap: $spacing-xxs; // Use smaller gap for desktop buttons
+  justify-content: center;
 }
 
 .action-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px; // Direct value for precision
+  border-radius: 4px; // Direct value for precision
+  color: $text-gray-medium; // Assuming this is #6b7280
+  transition: all 0.2s; // Direct value for precision
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+
+  // Targets SVG within IconEdit/IconDelete components
+  ::v-deep(svg) { // Using ::v-deep for robustness with scoped styles
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+// Specific hover states for DESKTOP action buttons
+.action-buttons {
+  .edit-button:hover {
+    background-color: #dbeafe; // Hex for consistency with ClientsTable/ObrasTable
+    color: #1e40af;      // Hex for consistency with ClientsTable/ObrasTable
+  }
+
+  .delete-button:hover {
+    background-color: #fee2e2; // Hex for consistency with ClientsTable/ObrasTable
+    color: #b91c1c;      // Hex for consistency with ClientsTable/ObrasTable
+  }
+}
+
+
+// Styles for MOBILE CARD action buttons
+.card-action-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  border: none;
-  border-radius: $border-radius;
+  width: auto; // Accommodate icon + text
+  height: auto; // Accommodate icon + text
+  padding: $spacing-xs; // Should be ~0.5rem
+  gap: $spacing-xxs; // Should be ~0.25rem, for space between icon and text
+  border: 1px solid $border-color;
+  border-radius: $border-radius; // Should be 4px
   cursor: pointer;
-  transition: background-color $transition-speed;
+  transition: background-color $transition-speed; // Should be 0.2s
+  background-color: white;
+
+  // Targets SVG within IconEdit/IconDelete components used in cards
+  ::v-deep(svg) { // Using ::v-deep for robustness
+    width: 1.25rem; // Corresponds to size="20"
+    height: 1.25rem; // Corresponds to size="20"
+  }
+
+  span {
+    font-size: $font-size-sm; // Should be ~0.75rem
+  }
 }
 
-.action-button svg {
-  width: 16px;
-  height: 16px;
-}
-
+// Base styles for MOBILE card action buttons (specific colors)
 .card-action-button.edit-button {
   background-color: rgba($primary-color, 0.1);
   color: $primary-color;
-  border-color: $primary-color;
-}
-
-.edit-button:hover {
-  background-color: rgba($primary-color, 0.2);
 }
 
 .card-action-button.delete-button {
   background-color: rgba($error-color, 0.1);
   color: $error-color;
-  border-color: $error-color;
 }
 
-.delete-button:hover {
-  background-color: rgba($error-color, 0.2);
+// Hover states for MOBILE card action buttons
+.card-action-button.edit-button:hover {
+  background-color: rgba($primary-color, 0.2); // Darken the background
+}
+
+.card-action-button.delete-button:hover {
+  background-color: rgba($error-color, 0.2); // Darken the background
 }
 
 .empty-message {

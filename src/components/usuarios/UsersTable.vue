@@ -63,31 +63,34 @@
             <td>{{ formatDate(user.created_at) }}</td>
             <td class="actions-cell" 
             :style="{ position: users.length === users.indexOf(user) + 1 ? 'absolute' : '', borderBottom: users.length === users.indexOf(user) + 1 ? 'none' : '' }">
-              <div class="actions-menu">
-                <button class="actions-button" @click="toggleMenu(user.id)">
-                  <IconEllipsis size="18" />
+              <div class="action-buttons">
+                <button
+                  class="action-button view-button"
+                  @click="handleView(user.id)"
+                  title="Visualizar"
+                >
+                  <IconView size="16" />
                 </button>
-                <div v-if="activeMenu === user.id" class="actions-dropdown">
-                    <div class="dropdown-item" @click="handleView(user.id)">
-                      <IconView />
-                      <span>Visualizar</span>
-                    </div>
-                    <div class="dropdown-item" @click="handleEdit(user.id)">
-                      <IconEdit />
-                      <span>Editar</span>
-                    </div>
-                    <div class="dropdown-item delete" @click="handleDelete(user.id)">
-                      <IconDelete />
-                      <span>Excluir</span>
-                    </div>
-                  </div>
+                <button
+                  class="action-button edit-button"
+                  @click="handleEdit(user.id)"
+                  title="Editar"
+                >
+                  <IconEdit size="16" />
+                </button>
+                <button
+                  class="action-button delete-button"
+                  @click="handleDelete(user.id)"
+                  title="Excluir"
+                >
+                  <IconDelete size="16" />
+                </button>
               </div>
             </td>
           </tr>
         </tbody>
       </table>
-      <!-- Div extra para garantir espaço para o menu de ações -->
-      <div class="table-spacer"></div>
+      <!-- <div class="table-spacer"></div> --> <!-- Removed as per instructions -->
     </div>
     
     <!-- Modal de confirmação de exclusão -->
@@ -114,7 +117,7 @@ import type { User, PaginationLinks } from '@/types/user.types'
 import Pagination from '@/components/common/Pagination.vue'
 import ConfirmationModal from '@/components/common/ConfirmationModal.vue'
 import IconSort from '@/components/icons/IconSort.vue'
-import IconEllipsis from '@/components/icons/IconEllipsis.vue'
+// IconEllipsis import removed
 import IconView from '@/components/icons/IconView.vue'
 import IconEdit from '@/components/icons/IconEdit.vue'
 import IconDelete from '@/components/icons/IconDelete.vue'
@@ -149,44 +152,24 @@ const emit = defineEmits<{
   (e: 'delete', userId: number): void;
 }>()
 
-// Controle do menu de ações
-const activeMenu = ref<number | null>(null)
-const toggleMenu = (userId: number) => {
-  if (activeMenu.value === userId) {
-    activeMenu.value = null
-  } else {
-    activeMenu.value = userId
-  }
-}
-
-// Fechar o menu quando clicar fora dele
-const closeMenuOnClickOutside = (event: MouseEvent) => {
-  if (activeMenu.value !== null) {
-    const target = event.target as HTMLElement
-    if (!target.closest('.actions-menu')) {
-      activeMenu.value = null
-    }
-  }
-}
-
 // Adicionar e remover o listener quando o componente é montado/desmontado
 onMounted(() => {
-  document.addEventListener('click', closeMenuOnClickOutside)
+  // document.addEventListener('click', closeMenuOnClickOutside) // Listener removed
 })
 
 onUnmounted(() => {
-  document.removeEventListener('click', closeMenuOnClickOutside)
+  // document.removeEventListener('click', closeMenuOnClickOutside) // Listener removed
 })
 
-// Ações do menu
+// Ações
 const handleView = (userId: number) => {
   router.push({ name: 'user-details', params: { id: userId.toString() } })
-  activeMenu.value = null
+  // activeMenu.value = null; // activeMenu removed
 }
 
 const handleEdit = (userId: number) => {
   router.push({ name: 'edit-user', params: { id: userId.toString() } })
-  activeMenu.value = null
+  // activeMenu.value = null; // activeMenu removed
 }
 
 const handleDelete = (userId: number) => {
@@ -196,7 +179,7 @@ const handleDelete = (userId: number) => {
     userToDelete.value = user
     showDeleteModal.value = true
   }
-  activeMenu.value = null
+  // activeMenu.value = null; // activeMenu removed
 }
 
 const confirmDelete = async () => {
@@ -358,67 +341,51 @@ const formatDate = (dateString: string): string => {
 .actions-cell {
   width: 80px;
   text-align: center;
-  position: relative;
+  /* position: relative; */ /* Removed as per instructions */
 }
 
-.actions-menu {
-  position: relative;
-  display: inline-block;
+/* New styles for desktop action buttons */
+.action-buttons {
+  display: flex;
+  gap: 0; /* For consistency */
+  justify-content: center; /* If actions-cell has text-align: center, this might not be strictly needed but is good practice */
 }
 
-.actions-button {
+.action-button {
   background: none;
   border: none;
-  color: #6b7280;
   cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 0.25rem;
-}
-
-.actions-button:hover {
-  background-color: #f3f4f6;
-  color: #111827;
-}
-
-.actions-dropdown {
-  position: absolute;
-  right: 0;
-  z-index: 10;
-  width: 150px;
-  background-color: white;
-  border-radius: 0.375rem;
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  padding: 0.5rem 0;
-  margin-top: 0.25rem;
-}
-
-.dropdown-item {
-  display: flex;
+  padding: 5px;
+  border-radius: 4px;
+  color: #6b7280; /* Default icon color */
+  transition: all 0.2s;
+  display: inline-flex;
   align-items: center;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  color: #4b5563;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
 }
 
-.dropdown-item:hover {
-  background-color: #f3f4f6;
+.action-button.view-button:hover {
+  background-color: #dbeafe;
+  color: #1e40af;
 }
-
-.dropdown-item.delete {
-  color: #ef4444;
+.action-button.edit-button:hover {
+  background-color: #dbeafe; /* Same as view, adjust if different design needed */
+  color: #1e40af;
 }
-
-.dropdown-item.delete:hover {
+.action-button.delete-button:hover {
   background-color: #fee2e2;
+  color: #b91c1c;
 }
 
-.dropdown-item svg {
-  margin-right: 0.5rem;
-  width: 16px;
-  height: 16px;
+/* SVG sizing within these buttons */
+.action-button ::v-deep(svg) { /* Or just .action-button svg if ::v-deep isn't needed */
+  width: 1rem; /* For size="16" */
+  height: 1rem;
 }
 
-.table-spacer {
-  height: 150px;
-}
+/* .table-spacer { */ /* Removed as per instructions */
+  /* height: 150px; */
+/* } */
 </style>
