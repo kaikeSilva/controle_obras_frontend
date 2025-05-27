@@ -1,3 +1,4 @@
+import { Client } from "./client.types";
 /**
  * Interface para o cliente simplificado retornado dentro da obra
  */
@@ -12,7 +13,7 @@ export interface ClienteSimplificado {
 export interface Obra {
   id: number
   cliente_id: number
-  cliente?: ClienteSimplificado
+  cliente?: Client
   nome: string
   descricao?: string
   endereco?: string

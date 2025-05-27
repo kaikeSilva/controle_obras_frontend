@@ -128,6 +128,17 @@ const router = createRouter({
           }
         },
         {
+          path: 'obras/:id/relatorio',
+          name: 'obra-report',
+          component: () => import('../views/obras/ObraReportView.vue'),
+          meta: {
+            title: 'Relatório da Obra',
+            description: 'Visualize o relatório financeiro da obra',
+            breadcrumb: "Relatório da Obra",
+            requiresAuth: true
+          }
+        },
+        {
           path: 'categorias-gastos/novo/:cliente_id?',
           name: 'new-categoria-gasto',
           component: () => import('@/views/categoriasGastos/CategoriaGastoFormView.vue'),

@@ -86,6 +86,14 @@
                   <path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0010 3H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z" />
                 </svg>
               </button>
+              <!-- report button -->
+              <button 
+                class="action-button report-button" 
+                @click="reportObra(obra)"
+                title="Relatório"
+              >
+                <IconReport />
+              </button>
               <button 
                 class="action-button delete-button" 
                 @click="deleteObra(obra)"
@@ -187,7 +195,9 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import type { Obra } from '@/types/obra.types'
+import IconReport from '@/components/icons/IconReport.vue'
 
 // Props
 const props = defineProps<{
@@ -252,6 +262,14 @@ const deleteObra = (obra: Obra) => {
 
 const sortTable = (field: string) => {
   emit('sort', field)
+}
+
+// Router para navegação
+const router = useRouter()
+
+// Função para redirecionar para a página de relatório da obra
+const reportObra = (obra: Obra) => {
+  router.push(`/obras/${obra.id}/relatorio`)
 }
 </script>
 
@@ -340,7 +358,7 @@ const sortTable = (field: string) => {
 
 .action-buttons {
   display: flex;
-  gap: 0.5rem;
+  gap: 0;
 }
 
 .action-button {
