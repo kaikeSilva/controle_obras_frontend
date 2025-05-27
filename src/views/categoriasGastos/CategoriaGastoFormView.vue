@@ -147,11 +147,6 @@ function handleClienteChange(clienteId: number | null) {
 onMounted(async () => {
   // Sempre buscar a lista de clientes para o autocomplete
   await searchClientes('')
-  
-  if (form.cliente_id) {
-    breadcrumbStore.setClienteId(form.cliente_id)
-  }
-  breadcrumbStore.setActiveTab('categoria-gasto')
 
   if (isEditMode.value && route.params.id) {
     loading.value = true
@@ -161,10 +156,8 @@ onMounted(async () => {
         // Se vier no formato { data: { ... } }, usar categoriaGasto.data
         if (categoriaGasto.data) {
           populateForm(categoriaGasto.data)
-          if (categoriaGasto.data.cliente_id) breadcrumbStore.setClienteId(categoriaGasto.data.cliente_id)
         } else {
           populateForm(categoriaGasto)
-          if (categoriaGasto.cliente_id) breadcrumbStore.setClienteId(categoriaGasto.cliente_id)
         }
       }
     } catch (error) {

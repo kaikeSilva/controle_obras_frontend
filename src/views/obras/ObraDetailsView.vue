@@ -163,12 +163,6 @@ onMounted(async () => {
     if (apiResponse && apiResponse.data) { 
       obra.value = apiResponse.data; 
       console.log('[ObraDetailsView] obra.value after assignment:', obra.value);
-
-      // Atualizar breadcrumbStore com clienteId para navegação de volta correta
-      if (obra.value && obra.value.cliente_id) { 
-        breadcrumbStore.setClienteId(parseInt(obra.value.cliente_id.toString()));
-        breadcrumbStore.setActiveTab('obras'); 
-      }
     } else {
       error.value = 'Obra não encontrada ou formato de dados inesperado.';
       console.warn('[ObraDetailsView] Obra data not found or malformed in API response for ID:', obraId, apiResponse);

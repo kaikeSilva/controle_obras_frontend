@@ -127,7 +127,6 @@ import { useBreadcrumbStore } from '@/stores/breadcrumbStore'
 const breadcrumbStore = useBreadcrumbStore()
 
 onMounted(async () => {
-  if (form.cliente_id) breadcrumbStore.setClienteId(form.cliente_id)
   breadcrumbStore.setActiveTab('obra')
 
   if (isEditMode.value && route.params.id) {
@@ -138,10 +137,8 @@ onMounted(async () => {
         // Se vier no formato { data: { ... } }, usar obra.data
         if (obra.data) {
           populateForm(obra.data)
-          if (obra.data.cliente_id) breadcrumbStore.setClienteId(obra.data.cliente_id)
         } else {
           populateForm(obra)
-          if (obra.cliente_id) breadcrumbStore.setClienteId(obra.cliente_id)
         }
       }
     } finally {
