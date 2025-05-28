@@ -72,7 +72,8 @@ const filteredData = computed(() => {
 })
 
 // Funções para lidar com os eventos de filtro
-async function handleFilterApplied(filters: DashboardFiltros) {
+async function handleFilterApplied(filters: any) {
+  console.log('Filtros recebidos do componente:', filters)
   
   // Converter os filtros do componente para o formato esperado pela API
   const dashboardFiltros: DashboardFiltros = {
@@ -82,23 +83,23 @@ async function handleFilterApplied(filters: DashboardFiltros) {
     categorias_gasto: []
   }
   
-  // Se houver obra selecionada, converter para o formato esperado
-  if (filters.obra) {
-    // Converter o ID da obra para número
-    const obraId = parseInt(filters.obra)
-    if (!isNaN(obraId)) {
-      dashboardFiltros.obras = [obraId]
-    }
+  // Se houver obras selecionadas, converter para o formato esperado
+  if (filters.obras && filters.obras.length > 0) {
+    // Mapear os IDs das obras para números
+    dashboardFiltros.obras = filters.obras.map((id: any) => {
+      return typeof id === 'number' ? id : parseInt(id.toString())
+    }).filter((id: number) => !isNaN(id))
   }
   
-  // Se houver categoria selecionada, converter para o formato esperado
-  if (filters.categoria) {
-    // Converter o ID da categoria para número
-    const categoriaId = parseInt(filters.categoria)
-    if (!isNaN(categoriaId)) {
-      dashboardFiltros.categorias_gasto = [categoriaId]
-    }
+  // Se houver categorias selecionadas, converter para o formato esperado
+  if (filters.categorias_gasto && filters.categorias_gasto.length > 0) {
+    // Mapear os IDs das categorias para números
+    dashboardFiltros.categorias_gasto = filters.categorias_gasto.map((id: any) => {
+      return typeof id === 'number' ? id : parseInt(id.toString())
+    }).filter((id: number) => !isNaN(id))
   }
+  
+  console.log('Filtros convertidos para a API:', dashboardFiltros)
   
   // Atualizar os filtros na store e buscar os dados atualizados
   dashboardStore.updateFiltros(dashboardFiltros)
