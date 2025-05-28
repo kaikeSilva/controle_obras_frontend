@@ -1,5 +1,6 @@
 import api from './api'
 import type { Obra, ObraForm, ObraFilter, PaginatedResponse } from '@/types/obra.types'
+import type { DashboardFiltros } from '@/types/dashboard.types'
 
 /**
  * Parâmetros para busca de obras
@@ -65,5 +66,46 @@ export const obrasService = {
   async toggleObraStatus(id: number, ativo: boolean): Promise<Obra> {
     const response = await api.put(`/obras/${id}`, { ativo })
     return response.data
+  },
+
+  /**
+   * Gera um relatório PDF de gastos de uma obra
+   * @param filtros Filtros para o relatório (mesmos parâmetros do dashboard)
+   * @returns Blob contendo o PDF gerado
+   */
+  async gerarRelatorioPDF(filtros: DashboardFiltros): Promise<Blob> {
+    try {
+      // Construir os parâmetros da query
+      const params = new URLSearchParams()
+      
+      // Adicionar datas
+      params.append('data_inicio', filtros.dataInicio)
+      params.append('data_fim', filtros.dataFim)
+      
+      // Adicionar obras (se houver)
+      if (filtros.obras && filtros.obras.length > 0) {
+        filtros.obras.forEach(obraId => {
+          params.append('obras[]', obraId.toString())
+        })
+      }
+      
+      // Adicionar categorias de gasto (se houver)
+      if (filtros.categorias_gasto && filtros.categorias_gasto.length > 0) {
+        filtros.categorias_gasto.forEach(categoriaId => {
+          params.append('categorias_gasto[]', categoriaId.toString())
+        })
+      }
+      
+      // Configurar responseType para blob para receber o PDF
+      const response = await api.get('/relatorios/gastos', { 
+        params,
+        responseType: 'blob'
+      })
+      
+      return response.data
+    } catch (error) {
+      console.error('Erro ao gerar relatório PDF:', error)
+      throw error
+    }
   }
 }

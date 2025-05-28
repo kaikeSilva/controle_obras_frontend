@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { obrasService, type GetObrasParams } from '@/services/obrasService'
 import type { Obra, ObraForm, PaginationMeta } from '@/types/obra.types'
+import type { DashboardFiltros } from '@/types/dashboard.types'
 
 export const useObrasStore = defineStore('obras', () => {
   // Estado
@@ -210,6 +211,22 @@ export const useObrasStore = defineStore('obras', () => {
   const clearError = () => {
     error.value = null
   }
+  
+  const gerarRelatorioPDF = async (filtros: DashboardFiltros): Promise<Blob | null> => {
+    loading.value = true
+    error.value = null
+
+    try {
+      const pdfBlob = await obrasService.gerarRelatorioPDF(filtros)
+      return pdfBlob
+    } catch (err: any) {
+      console.error('Erro ao gerar relatório PDF:', err)
+      error.value = err.response?.data?.message || 'Erro ao gerar relatório PDF'
+      return null
+    } finally {
+      loading.value = false
+    }
+  }
 
   return {
     // Estado
@@ -242,6 +259,7 @@ export const useObrasStore = defineStore('obras', () => {
     setFilters,
     clearFilters,
     setSorting,
-    clearError
+    clearError,
+    gerarRelatorioPDF
   }
 })

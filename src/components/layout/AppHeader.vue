@@ -1,5 +1,5 @@
 <template>
-  <header class="app-header">
+  <header class="app-header" :class="{ 'sidebar-collapsed': layoutStore.isSidebarCollapsed }">
     <button class="menu-toggle" 
     @click="handleMenuToggle">
       <IconBars :size="24" />
@@ -12,12 +12,7 @@
       <span>{{ currentContext?.description }}</span>
     </div>
     
-    <div class="header-actions">
-      <!-- <button class="theme-toggle" @click="layoutStore.toggleDarkMode()">
-        <IconSun v-if="layoutStore.isDarkMode" />
-        <IconMoon v-else />
-      </button> -->
-      
+    <div class="header-actions">      
       <span class="user-name">{{ userStore.userName }}</span>
       <img 
         :src="userStore.userAvatar" 
@@ -39,6 +34,7 @@ import IconSignOut from '@/components/icons/IconSignOut.vue'
 import IconSupport from '@/components/icons/IconSupport.vue'
 import { useBreadcrumbStore } from '@/stores/breadcrumbStore'
 import { storeToRefs } from 'pinia'
+
 
 const layoutStore = useLayoutStore()
 const userStore = useUserStore()
@@ -72,9 +68,17 @@ function handleMenuToggle() {
   right: 0;
   left: $sidebar-width;
   z-index: 100;
+  transition: all 0.3s ease;
+  
+  &.sidebar-collapsed {
+    width: calc(100% - $sidebar-collapsed-width);
+    left: $sidebar-collapsed-width;
+  }
+
   .menu-toggle {
     display: none;
   }
+
   @include dark-mode {
     background: #1e1e1e;
     color: white;
@@ -88,7 +92,6 @@ function handleMenuToggle() {
       display: block;
     }
   }
-
 }
 
 .menu-toggle,

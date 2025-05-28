@@ -101,7 +101,8 @@
 
 5. Criar Componente de Tabela EntradaRecurso em src/components/entradaRecurso/EntradaRecursoTable.vue
     Ver exemplo na entidade de obras nos arquivos abaixo:
-    - src/components/obras/ObrasTable.vueChecklist:
+    - src/components/obras/ObrasTable.vue 
+    Checklist:
 
     Implementar src/components/entradaRecurso/EntradaRecursoTable.vue
     Criar estrutura de tabela desktop com colunas ordenáveis

@@ -147,8 +147,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import html2canvas from 'html2canvas'
-import jsPDF from 'jspdf'
 import DashboardCard from '@/components/dashboard/DashboardCard.vue'
 import DashboardMonthEvolution from '@/components/dashboard/DashboardMonthEvolution.vue'
 import ObraReportHeader from '@/components/obras/ObraReportHeader.vue'
@@ -301,110 +299,38 @@ async function fetchGastos() {
   }
 }
 
-// Método para gerar PDF
+// Método para gerar PDF usando a API do backend
 const generatePDF = async () => {
-  if (!pdfContent.value || isGeneratingPdf.value) return
+  if (isGeneratingPdf.value) return
   
   isGeneratingPdf.value = true
   
   try {
-    // Mostrar cabeçalho para PDF
-    const pdfHeader = pdfContent.value.querySelector('.pdf-header') as HTMLElement
-    if (pdfHeader) {
-      pdfHeader.style.display = 'block'
+    // Usar os mesmos filtros que são usados para o dashboard
+    const pdfBlob = await obrasService.gerarRelatorioPDF(dashboardStore.filtros)
+    
+    if (!pdfBlob) {
+      throw new Error('Não foi possível gerar o PDF')
     }
     
-    // Esconder filtros, cabeçalho visível e controles no PDF
-    const filters = pdfContent.value.querySelector('.filters-section') as HTMLElement
-    const pdfControls = document.querySelector('.pdf-controls') as HTMLElement
+    // Criar URL para o blob e fazer download
+    const url = window.URL.createObjectURL(pdfBlob)
+    const link = document.createElement('a')
+    link.href = url
     
-    const originalFilterDisplay = filters?.style.display
-    const originalControlsDisplay = pdfControls?.style.display
-    
-    if (filters) {
-      filters.style.display = 'none'
-    }
-    if (pdfControls) {
-      pdfControls.style.display = 'none'
-    }
-    
-    // Aguardar um momento para garantir que as mudanças de estilo sejam aplicadas
-    await new Promise(resolve => setTimeout(resolve, 100))
-    
-    // Configurações do html2canvas com resolução otimizada
-    const canvas = await html2canvas(pdfContent.value, {
-      scale: 5, // Aumentado para 4 para maior nitidez
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: '#ffffff',
-      logging: false,
-      width: pdfContent.value.scrollWidth,
-      height: pdfContent.value.scrollHeight,
-      onclone: (clonedDoc) => {
-        // Garantir que o cabeçalho seja visível no clone
-        const clonedHeader = clonedDoc.querySelector('.pdf-header') as HTMLElement
-        if (clonedHeader) {
-          clonedHeader.style.display = 'block'
-        }
-      }
-    })
-    
-    // Configurações do PDF com DPI otimizado
-    const imgData = canvas.toDataURL('image/png', 1.0)
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4',
-      compress: true,
-      precision: 16, // Maior precisão para melhor qualidade
-      hotfixes: ['px_scaling'], // Corrige problemas de escala
-    })
-    
-    // Definir DPI para 300 (padrão de impressão profissional)
-    pdf.setProperties({
-      title: `Relatório - ${obraData.value?.nome || 'Obra'}`,
-      subject: 'Relatório Financeiro',
-      creator: 'Sistema de Controle de Obras',
-      author: 'Controle de Obras',
-      keywords: 'relatório, obra, financeiro',
-    })
-    
-    const pdfWidth = pdf.internal.pageSize.getWidth()
-    const pdfHeight = pdf.internal.pageSize.getHeight()
-    const imgWidth = pdfWidth - 20 // margem de 10mm de cada lado
-    const imgHeight = (canvas.height * imgWidth) / canvas.width
-    
-    let heightLeft = imgHeight
-    let position = 10 // margem superior
-    
-    // Adicionar primeira página
-    pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight)
-    heightLeft -= (pdfHeight - 20) // descontar margens
-    
-    // Adicionar páginas adicionais se necessário
-    while (heightLeft >= 0) {
-      position = heightLeft - imgHeight + 10
-      pdf.addPage()
-      pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight)
-      heightLeft -= (pdfHeight - 20)
-    }
-    
-    // Salvar PDF
+    // Nome do arquivo
     const obraNome = obraData.value?.nome || 'obra'
     const fileName = `relatorio-${obraNome.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().split('T')[0]}.pdf`
-    pdf.save(fileName)
+    link.download = fileName
     
-    // Restaurar elementos originais
-    if (pdfHeader) {
-      pdfHeader.style.display = 'none'
-    }
-    if (filters) {
-      filters.style.display = originalFilterDisplay || ''
-    }
-    if (pdfControls) {
-      pdfControls.style.display = originalControlsDisplay || ''
-    }
-
+    // Simular clique para iniciar o download
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    
+    // Liberar o objeto URL
+    window.URL.revokeObjectURL(url)
+    
     notificationStore.addNotification('PDF gerado com sucesso!', 'success')
   } catch (error) {
     console.error('Erro ao gerar PDF:', error)
