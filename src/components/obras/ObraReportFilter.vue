@@ -135,7 +135,6 @@ function clearFilters() {
 }
 
 function applyFilters() {
-  console.log("aplicando filtros", filters.value)
   dashboardStore.updateFiltros(filters.value)
   dashboardStore.fetchDashboardData()
   emit('filter-applied', filters.value)

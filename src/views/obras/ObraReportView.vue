@@ -170,11 +170,11 @@ function formatCurrency(value?: number) {
 
 // Calcular total de gastos na página atual
 const totalGastos = computed(() => {
+  
   return gastosStore.gastos.reduce((total, gasto) => total + gasto.valor, 0)
 })
 
 function handleFilterUpdated(filters: DashboardFiltros) {
-  console.log('Filtros recebidos do componente:', filters)
   
   // Converter o objeto Proxy para um objeto JavaScript simples
   const plainFilters = JSON.parse(JSON.stringify(filters))
@@ -184,7 +184,6 @@ function handleFilterUpdated(filters: DashboardFiltros) {
     plainFilters.obras = [...plainFilters.obras]
   }
   
-  console.log('Filtros convertidos:', plainFilters)
   
   // Passar os filtros convertidos para o store
   gastosStore.setFilters(plainFilters)

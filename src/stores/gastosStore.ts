@@ -50,7 +50,6 @@ export const useGastosStore = defineStore('gastos', {
       this.loading = true;
       this.error = null;
       try {
-        console.log('Filtros para buscar gastos:', this.filters)
         const response = await getGastos({
           ...this.filters,
           sort: this.sort,
@@ -145,7 +144,6 @@ export const useGastosStore = defineStore('gastos', {
           plainFilters.data_fim = plainFilters.dataFim;
         }
         
-        console.log('Filtros convertidos no store:', plainFilters);
         this.filters = plainFilters;
       } catch (error) {
         console.error('Erro ao converter filtros:', error);
