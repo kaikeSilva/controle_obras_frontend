@@ -7,7 +7,7 @@
       </div>
     </div>
     <div class="stat-value">{{ value }}</div>
-    <div class="stat-change" :class="changeClass">
+    <div v-if="change" class="stat-change" :class="changeClass">
       <span>{{ change.direction }}</span> {{ change.value }} vs mês anterior
     </div>
   </div>

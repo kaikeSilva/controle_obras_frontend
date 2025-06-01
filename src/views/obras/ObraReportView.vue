@@ -10,25 +10,15 @@
     
     <!-- Conteúdo que será convertido em PDF -->
     <div ref="pdfContent" class="pdf-content">
-      <!-- Cabeçalho para PDF (oculto na tela, visível no PDF) -->
-      <div class="pdf-header">
-        <h1>Relatório Financeiro da Obra</h1>
-        <span>Referente ao período de {{ formatDate(dashboardStore.filtros.dataInicio) }} até {{ formatDate(dashboardStore.filtros.dataFim) }}</span>
-        <div class="pdf-date">
-          {{ new Date().toLocaleDateString('pt-BR', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-          }) }}
-        </div>
-        
-        <hr class="pdf-divider">
-      </div>
-             <!-- Cabeçalho com informações da obra e cliente -->
-    <ObraReportHeader :obra="obraData" />
+      
+      <!-- Cabeçalho com informações da obra e cliente -->
+      <ObraReportHeader :obra="obraData" />
 
       <!-- Filters Section -->
-      <ObraReportFilter />
+      <ObraReportFilter 
+        :obra="obraData"
+        @filter-applied="handleFilterUpdated"
+      />
 
       <!-- Loading Indicator -->
       <div v-if="isLoading" class="loading-container">
@@ -76,11 +66,11 @@
           </div>
           
           <!-- Gastos Table -->
-          <div v-else-if="gastos.length > 0" class="gastos-table-container">
+          <div v-else-if="gastosStore.gastos.length > 0" class="gastos-table-container">
             <table class="gastos-table">
               <thead>
                 <tr>
-                  <th>Data</th>
+                  <th>Data do Pagamento</th>
                   <th>Descrição</th>
                   <th>Categoria</th>
                   <th>Valor</th>
@@ -88,7 +78,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="gasto in gastos" :key="gasto.id">
+                <tr v-for="gasto in gastosStore.gastos" :key="gasto.id">
                   <td>{{ formatDate(gasto.data_pagamento) }}</td>
                   <td>{{ gasto.descricao }}</td>
                   <td>
@@ -111,27 +101,6 @@
                 </tr>
               </tfoot>
             </table>
-            
-            <!-- Pagination -->
-            <div class="pagination" v-if="gastosMeta && gastosMeta.last_page > 1">
-              <button 
-                class="pagination-button" 
-                :disabled="gastosMeta.current_page === 1"
-                @click="changePage(gastosMeta.current_page - 1)"
-              >
-                Anterior
-              </button>
-              <span class="pagination-info">
-                Página {{ gastosMeta.current_page }} de {{ gastosMeta.last_page }}
-              </span>
-              <button 
-                class="pagination-button" 
-                :disabled="gastosMeta.current_page === gastosMeta.last_page"
-                @click="changePage(gastosMeta.current_page + 1)"
-              >
-                Próxima
-              </button>
-            </div>
           </div>
           
           <!-- No Gastos Message -->
@@ -153,11 +122,10 @@ import ObraReportHeader from '@/components/obras/ObraReportHeader.vue'
 import ObraReportFilter from '@/components/obras/ObraReportFilter.vue'
 import { obrasService } from '@/services/obrasService'
 import type { Obra } from '@/types/obra.types'
-import { getGastos } from '@/services/gastosService'
 import type { Gasto, PaginationMeta } from '@/types/gasto.types'
 import { useDashboardStore } from '@/stores/dashboardStore'
 import { useNotificationStore } from '@/stores/notificationStore'
-
+import { useGastosStore } from '@/stores/gastosStore'
 // Refs
 const route = useRoute()
 const router = useRouter()
@@ -170,13 +138,11 @@ const obraData = ref<Obra | null>(null)
 
 // Estado para os gastos
 const isLoadingGastos = ref(false)
-const gastosError = ref<string | null>(null)
-const gastos = ref<Gasto[]>([])
-const gastosMeta = ref<PaginationMeta | null>(null)
 const currentPage = ref(1)
 
 const dashboardStore = useDashboardStore()
 const notificationStore = useNotificationStore()
+const gastosStore = useGastosStore()
 // Obter o ID da obra da rota
 const obraId = computed(() => {
   return route.params.id ? Number(route.params.id) : null
@@ -186,15 +152,6 @@ const obraId = computed(() => {
 const today = new Date()
 const firstDay = new Date(today.getFullYear(), today.getMonth(), 1)
 const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0)
-
-// Usar os dados do dashboard para o gráfico (mesmo formato usado no DashboardView)
-const filteredData = computed(() => {
-  return dashboardStore.chartData || {
-    gastos: [],
-    faturamento: [],
-    entradas: []
-  }
-})
 
 // Métodos
 function formatDate(dateString: string) {
@@ -211,43 +168,28 @@ function formatCurrency(value?: number) {
   }).format(value)
 }
 
-// Mudar página da tabela de gastos
-function changePage(page: number) {
-  currentPage.value = page
-  fetchGastos()
-}
-
-// Obter cor da categoria de gasto
-function getCategoriaColor(categoriaId: number): string {
-  if (!categoriaId || !dashboardStore.chartData?.filtros_disponiveis?.categorias_gasto) return '#cccccc'
-  
-  const categoria = dashboardStore.chartData.filtros_disponiveis.categorias_gasto.find(c => c.id === categoriaId)
-  return categoria?.cor || '#cccccc'
-}
-
 // Calcular total de gastos na página atual
 const totalGastos = computed(() => {
-  return gastos.value.reduce((total, gasto) => total + gasto.valor, 0)
+  return gastosStore.gastos.reduce((total, gasto) => total + gasto.valor, 0)
 })
 
-// Buscar dados do dashboard
-async function fetchData() {
-  try {
-    isLoading.value = true
-    error.value = null
-    
-    // Os filtros agora são gerenciados pelo componente ObraReportFilter
-    // que atualiza diretamente o dashboardStore
-    
-    // Buscar gastos com os mesmos filtros
-    await fetchGastos()
-    
-  } catch (err) {
-    console.error('Erro ao buscar dados do dashboard:', err)
-    error.value = err instanceof Error ? err.message : 'Erro ao carregar dados do dashboard'
-  } finally {
-    isLoading.value = false
+function handleFilterUpdated(filters: DashboardFiltros) {
+  console.log('Filtros recebidos do componente:', filters)
+  
+  // Converter o objeto Proxy para um objeto JavaScript simples
+  const plainFilters = JSON.parse(JSON.stringify(filters))
+  
+  // Garantir que obras seja um array de números simples, não um Proxy
+  if (plainFilters.obras && Array.isArray(plainFilters.obras)) {
+    plainFilters.obras = [...plainFilters.obras]
   }
+  
+  console.log('Filtros convertidos:', plainFilters)
+  
+  // Passar os filtros convertidos para o store
+  gastosStore.setFilters(plainFilters)
+  gastosStore.setPerPage("all")
+  fetchGastos()
 }
 
 // Buscar dados da obra
@@ -268,31 +210,10 @@ async function fetchGastos() {
   if (!obraId.value) return
   
   isLoadingGastos.value = true
-  gastosError.value = null
   
   try {
-    // Usar os filtros do dashboardStore
-    const params = {
-      obra_id: obraId.value,
-      data_inicio: dashboardStore.filtros.dataInicio,
-      data_fim: dashboardStore.filtros.dataFim,
-      page: currentPage.value,
-      per_page: 10
-    }
-    
-    // Adicionar categorias se houver selecionadas no store
-    if (dashboardStore.filtros.categorias_gasto && dashboardStore.filtros.categorias_gasto.length > 0) {
-      params.categoria_gasto_id = dashboardStore.filtros.categorias_gasto
-    }
-    
-    // Buscar os gastos
-    const response = await getGastos(params)
-    
-    // Atualizar o estado
-    gastos.value = response.data
-    gastosMeta.value = response.meta
+    await gastosStore.fetchGastos()
   } catch (err) {
-    gastosError.value = err instanceof Error ? err.message : 'Erro ao carregar gastos'
     console.error('Erro ao buscar gastos:', err)
   } finally {
     isLoadingGastos.value = false
@@ -348,7 +269,7 @@ onMounted(async () => {
   }
   
   await fetchObraData()
-  await fetchData()
+  await fetchGastos()
 })
 </script>
 

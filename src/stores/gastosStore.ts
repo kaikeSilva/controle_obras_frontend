@@ -30,8 +30,9 @@ export const useGastosStore = defineStore('gastos', {
     pagination: null,
     links: null,
     filters: {},
-    sort: 'created_at',
-    direction: 'desc',
+    sort: 'data_pagamento',
+    per_page: 10,
+    direction: 'asc',
   }),
   getters: {
     gastosList: (state) => state.gastos,
@@ -45,14 +46,16 @@ export const useGastosStore = defineStore('gastos', {
     gastoDetail: (state) => state.gasto,
   },
   actions: {
-    async fetchGastos(params: Partial<GetGastosParams> = {}) {
+    async fetchGastos(params: any = {}) {
       this.loading = true;
       this.error = null;
       try {
+        console.log('Filtros para buscar gastos:', this.filters)
         const response = await getGastos({
           ...this.filters,
           sort: this.sort,
           direction: this.direction,
+          per_page: this.per_page,
           ...params,
         });
         this.gastos = response.data;
@@ -120,7 +123,41 @@ export const useGastosStore = defineStore('gastos', {
       }
     },
     setFilters(filters: GastoFilter) {
-      this.filters = { ...filters };
+      // Converter Proxy para objeto JavaScript simples
+      // Usando JSON.parse(JSON.stringify()) para remover a reatividade
+      try {
+        const plainFilters = JSON.parse(JSON.stringify(filters));
+        
+        // Garantir que arrays não sejam Proxy
+        if (plainFilters.obras && Array.isArray(plainFilters.obras)) {
+          plainFilters.obras = [...plainFilters.obras];
+        }
+        
+        if (plainFilters.categorias_gasto && Array.isArray(plainFilters.categorias_gasto)) {
+          plainFilters.categorias_gasto = [...plainFilters.categorias_gasto];
+        }
+
+        // dataInicio e dataFim -> data_inicio e data_fim
+        if (plainFilters.dataInicio) {
+          plainFilters.data_inicio = plainFilters.dataInicio;
+        }
+        if (plainFilters.dataFim) {
+          plainFilters.data_fim = plainFilters.dataFim;
+        }
+        
+        console.log('Filtros convertidos no store:', plainFilters);
+        this.filters = plainFilters;
+      } catch (error) {
+        console.error('Erro ao converter filtros:', error);
+        // Fallback para o método original
+        this.filters = { ...filters };
+      }
+    },
+    setPage(page: number) {
+      this.page = page;
+    },
+    setPerPage(per_page: number | "all") {
+      this.per_page = per_page;
     },
     setSort(sort: string, direction: 'asc' | 'desc') {
       this.sort = sort;

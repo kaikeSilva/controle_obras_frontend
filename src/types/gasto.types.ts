@@ -45,8 +45,12 @@ export interface GastoFilter {
   search?: string;
   obra_id?: number;
   categoria_gasto_id?: number;
+  categorias_gasto?: number[];
+  obras?: number[];
   fonte_pagadora_id?: number;
   data_compra?: string;
+  data_inicio?: string;
+  data_fim?: string;
   data_pagamento?: string;
 }
 

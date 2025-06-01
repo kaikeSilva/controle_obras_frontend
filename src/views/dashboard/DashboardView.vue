@@ -97,6 +97,11 @@ async function handleFilterApplied(filters: any) {
     dashboardFiltros.categorias_gasto = filters.categorias_gasto.map((id: any) => {
       return typeof id === 'number' ? id : parseInt(id.toString())
     }).filter((id: number) => !isNaN(id))
+  } else if (filters.categorias && filters.categorias.length > 0) {
+    // Compatibilidade com o componente DashboardFilter que usa 'categorias' em vez de 'categorias_gasto'
+    dashboardFiltros.categorias_gasto = filters.categorias.map((id: any) => {
+      return typeof id === 'number' ? id : parseInt(id.toString())
+    }).filter((id: number) => !isNaN(id))
   }
   
   console.log('Filtros convertidos para a API:', dashboardFiltros)

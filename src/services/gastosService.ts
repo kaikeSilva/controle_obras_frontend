@@ -15,7 +15,39 @@ export interface GetGastosParams extends GastoFilter {
 
 export async function getGastos(params: GetGastosParams = {}): Promise<PaginatedResponse<Gasto>> {
   try {
-    const { data } = await api.get('/gastos', { params });
+    // Construir os parâmetros da query manualmente para lidar com arrays
+    const urlParams = new URLSearchParams();
+    
+    // Adicionar parâmetros simples
+    if (params.page) urlParams.append('page', params.page.toString());
+    if (params.per_page) urlParams.append('per_page', params.per_page.toString());
+    if (params.sort) urlParams.append('sort', params.sort);
+    if (params.direction) urlParams.append('direction', params.direction);
+    if (params.search) urlParams.append('search', params.search);
+    if (params.obra_id) urlParams.append('obra_id', params.obra_id.toString());
+    if (params.categoria_gasto_id) urlParams.append('categoria_gasto_id', params.categoria_gasto_id.toString());
+    if (params.fonte_pagadora_id) urlParams.append('fonte_pagadora_id', params.fonte_pagadora_id.toString());
+    if (params.data_compra) urlParams.append('data_compra', params.data_compra);
+    if (params.data_pagamento) urlParams.append('data_pagamento', params.data_pagamento);
+    if (params.data_inicio) urlParams.append('data_inicio', params.data_inicio);
+    if (params.data_fim) urlParams.append('data_fim', params.data_fim);
+    
+    // Adicionar arrays de parâmetros
+    if (params.categorias_gasto && params.categorias_gasto.length > 0) {
+      params.categorias_gasto.forEach(id => {
+        urlParams.append('categorias_gasto[]', id.toString());
+      });
+    }
+    
+    // Adicionar array de obras
+    if (params.obras && params.obras.length > 0) {
+      params.obras.forEach(id => {
+        urlParams.append('obras[]', id.toString());
+      });
+    }
+    
+    // Fazer a requisição com os parâmetros construídos
+    const { data } = await api.get(`/gastos?${urlParams.toString()}`);
     return data;
   } catch (error: any) {
     throw error.response?.data || error;
