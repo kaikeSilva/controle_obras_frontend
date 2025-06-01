@@ -13,7 +13,6 @@ export class PresenceChannel extends PrivateChannel {
     // Ensure presence channel names are prefixed appropriately
     const presenceChannelName = name.startsWith('presence-') ? name : `presence-${name}`;
     super(service, presenceChannelName);
-    logger.info(`[PresenceChannel] Initialized for presence channel: ${this.name}`);
     // Echo's join(channelName) method handles the actual subscription and auth for presence channels.
     // This class wraps that functionality.
   }
@@ -27,7 +26,6 @@ export class PresenceChannel extends PrivateChannel {
       logger.error(`[PresenceChannel:${this.name}] Echo instance not available for 'here'.`);
       return this;
     }
-    logger.info(`[PresenceChannel:${this.name}] Registering 'here' callback.`);
     this.service['echo'].join(this.name).here(callback);
     return this;
   }
@@ -41,7 +39,6 @@ export class PresenceChannel extends PrivateChannel {
       logger.error(`[PresenceChannel:${this.name}] Echo instance not available for 'joining'.`);
       return this;
     }
-    logger.info(`[PresenceChannel:${this.name}] Registering 'joining' callback.`);
     this.service['echo'].join(this.name).joining(callback);
     return this;
   }
@@ -55,7 +52,6 @@ export class PresenceChannel extends PrivateChannel {
       logger.error(`[PresenceChannel:${this.name}] Echo instance not available for 'leaving'.`);
       return this;
     }
-    logger.info(`[PresenceChannel:${this.name}] Registering 'leaving' callback.`);
     this.service['echo'].join(this.name).leaving(callback);
     return this;
   }

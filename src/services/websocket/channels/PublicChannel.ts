@@ -5,7 +5,6 @@ import { logger } from '@/utils/logger';
 export class PublicChannel extends BaseChannel {
   constructor(service: WebSocketService, name: string) {
     super(service, name);
-    logger.info(`[PublicChannel] Initialized for public channel: ${name}`);
     // Public channels are typically subscribed to directly by Echo
     // No specific join logic needed here usually, `listen` will handle it.
   }

@@ -63,10 +63,7 @@ watch(lastMessage, (newMessage) => {
 
 const subscribeToChannel = () => {
   if (channelName.value && eventName.value && isConnected.value) {
-    logger.info(`[DebugComponent] Subscribing to ${channelName.value} for event ${eventName.value}`);
     webSocketStore.subscribe(channelName.value, eventName.value, (data: any) => {
-      logger.info(`[DebugComponent] Message on ${channelName.value} - ${eventName.value}:`, data);
-      // The global lastMessage watcher will also pick this up if the store updates it correctly
     });
     subscribedChannels[channelName.value] = true;
   } else {
@@ -76,7 +73,6 @@ const subscribeToChannel = () => {
 
 const unsubscribeFromChannel = () => {
   if (channelName.value && subscribedChannels[channelName.value]) {
-    logger.info(`[DebugComponent] Unsubscribing from ${channelName.value} for event ${eventName.value}`);
     webSocketStore.unsubscribe(channelName.value, eventName.value);
     delete subscribedChannels[channelName.value];
   } else {
@@ -88,10 +84,8 @@ const sendMessage = () => {
   if (targetChannel.value && messageEvent.value && messageData.value && isConnected.value) {
     try {
       const data = JSON.parse(messageData.value);
-      logger.info(`[DebugComponent] Sending message to ${targetChannel.value}, event ${messageEvent.value}:`, data);
       webSocketStore.sendMessage(targetChannel.value, messageEvent.value, data);
     } catch (e) {
-      logger.error('[DebugComponent] Invalid JSON data for message:', e);
       alert('Invalid JSON data. Please check the console for details.');
     }
   } else {

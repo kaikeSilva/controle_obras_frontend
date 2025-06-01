@@ -35,7 +35,6 @@ export class WebSocketService {
   async connect(): Promise<void> {
     try {
       this.updateStatus('connecting');
-      this.logger.info('Iniciando conexão WebSocket...', this.config);
 
       if (this.echo) {
         this.disconnect();
@@ -52,7 +51,6 @@ export class WebSocketService {
 
   disconnect(): void {
     if (this.echo) {
-      this.logger.info('Desconectando WebSocket...');
       this.echo.disconnect();
       this.echo = null;
     }
@@ -67,7 +65,6 @@ export class WebSocketService {
       throw new Error('WebSocket não conectado');
     }
 
-    this.logger.info(`Inscrevendo no canal: ${channel}, evento: ${event}`);
     
     this.echo.channel(channel).listen(event, (data: any) => {
       const message: WebSocketMessage = {
@@ -87,7 +84,6 @@ export class WebSocketService {
     if (!this.echo) {
       return;
     }
-    this.logger.info(`Cancelando inscrição do canal: ${channel}` + (event ? `, evento: ${event}` : ''));
     if (event) {
       this.echo.channel(channel).stopListening(event);
     } else {
@@ -103,7 +99,6 @@ export class WebSocketService {
     // This example assumes you might be using whisper or a similar client event mechanism
     // Pusher client events need to be enabled on the server side
     // For standard Pusher, you might need a different approach or use HTTP for sending if not using client events.
-    this.logger.info(`Enviando mensagem para canal: ${channel}, evento: ${event}`, data);
     this.echo.private(channel).whisper(event, data); 
   }
 
@@ -115,13 +110,11 @@ export class WebSocketService {
       this.state.socketId = this.echo?.socketId() || null;
       this.state.reconnectAttempts = 0;
       this.clearReconnectTimer();
-      this.logger.info('WebSocket conectado com sucesso!', { socketId: this.state.socketId });
       this.eventBus.emit(WEBSOCKET_EVENTS.CONNECTED, { socketId: this.state.socketId });
     });
 
     this.echo.connector.pusher.connection.bind('connecting', () => {
       this.updateStatus('connecting');
-      this.logger.info('WebSocket tentando conectar...');
       this.eventBus.emit(WEBSOCKET_EVENTS.CONNECTING);
     });
 
@@ -168,7 +161,6 @@ export class WebSocketService {
     this.clearReconnectTimer();
     this.updateStatus('reconnecting');
     this.state.reconnectAttempts++;
-    this.logger.info(`Tentando reconectar em ${this.config.reconnectInterval}ms... (Tentativa ${this.state.reconnectAttempts})`);
     
     this.reconnectTimer = setTimeout(() => {
       this.connect();

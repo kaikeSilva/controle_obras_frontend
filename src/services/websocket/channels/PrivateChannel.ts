@@ -8,7 +8,6 @@ export class PrivateChannel extends BaseChannel {
     // e.g., if your convention is 'private-channelName'
     const privateChannelName = name.startsWith('private-') ? name : `private-${name}`;
     super(service, privateChannelName);
-    logger.info(`[PrivateChannel] Initialized for private channel: ${this.name}`);
     // Private channels require authentication, which Echo handles via its auth endpoint.
     // The subscription itself is handled by `listen` or a specific `join` if needed.
   }
@@ -24,7 +23,6 @@ export class PrivateChannel extends BaseChannel {
       logger.error(`[PrivateChannel:${this.name}] WebSocketService not available to whisper event '${eventName}'.`);
       return this;
     }
-    logger.info(`[PrivateChannel:${this.name}] Whispering event '${eventName}' with data:`, data);
     // Laravel Echo typically prefixes client events with 'client-'.
     // However, the `whisper` method in Echo's PrivateChannel class handles this.
     this.service.send(this.name, eventName, data); 

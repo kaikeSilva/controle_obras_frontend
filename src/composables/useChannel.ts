@@ -13,7 +13,6 @@ export function useChannel(channelName: string) {
       // Optionally, queue subscription or wait for connection
       const unwatch = watch(() => store.state.isConnected, (connected) => {
         if (connected) {
-          logger.info(`[useChannel] WebSocket connected. Subscribing to ${channelName}, event ${event}`);
           store.subscribe(channelName, event, (data) => {
             lastMessage.value = data;
             callback(data);
@@ -25,7 +24,6 @@ export function useChannel(channelName: string) {
       return; // Exit, subscription will happen once connected
     }
 
-    logger.info(`[useChannel] Subscribing to ${channelName}, event ${event}`);
     store.subscribe(channelName, event, (data) => {
       lastMessage.value = data;
       callback(data);
@@ -34,7 +32,6 @@ export function useChannel(channelName: string) {
   };
 
   const unsubscribe = (event?: string) => {
-    logger.info(`[useChannel] Unsubscribing from ${channelName}` + (event ? `, event ${event}` : ''));
     store.unsubscribe(channelName, event);
     isSubscribed.value = false;
   };
@@ -44,14 +41,12 @@ export function useChannel(channelName: string) {
         logger.error(`[useChannel] Cannot send message on ${channelName}, WebSocket not connected.`);
         throw new Error('WebSocket not connected');
     }
-    logger.info(`[useChannel] Sending message on ${channelName}, event ${event}`, data);
     store.sendMessage(channelName, event, data);
   };
 
   onUnmounted(() => {
     // Unsubscribe from all events on this channel when the component is unmounted
     if (isSubscribed.value) {
-      logger.info(`[useChannel] Component unmounted. Unsubscribing from all events on ${channelName}`);
       unsubscribe(); 
     }
   });

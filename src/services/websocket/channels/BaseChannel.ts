@@ -8,7 +8,6 @@ export abstract class BaseChannel {
   constructor(service: WebSocketService, name: string) {
     this.service = service;
     this.name = name;
-    logger.info(`[BaseChannel] Initialized for channel: ${name}`);
   }
 
   /**
@@ -21,7 +20,6 @@ export abstract class BaseChannel {
       logger.error(`[BaseChannel:${this.name}] WebSocketService not available to listen to event '${event}'.`);
       return this;
     }
-    logger.info(`[BaseChannel:${this.name}] Listening to event '${event}'`);
     this.service.subscribe(this.name, event, callback);
     return this;
   }
@@ -35,7 +33,6 @@ export abstract class BaseChannel {
       logger.error(`[BaseChannel:${this.name}] WebSocketService not available to stop listening to event '${event}'.`);
       return this;
     }
-    logger.info(`[BaseChannel:${this.name}] Stopping listening to event '${event}'`);
     this.service.unsubscribe(this.name, event);
     return this;
   }
@@ -48,7 +45,6 @@ export abstract class BaseChannel {
       logger.error(`[BaseChannel:${this.name}] WebSocketService not available to leave channel.`);
       return;
     }
-    logger.info(`[BaseChannel:${this.name}] Leaving channel`);
     this.service.unsubscribe(this.name);
   }
 

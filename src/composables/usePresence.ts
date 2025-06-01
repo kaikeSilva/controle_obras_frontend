@@ -24,7 +24,6 @@ export function usePresenceChannel(channelName: string) {
       return;
     }
 
-    logger.info(`[usePresenceChannel] Subscribing to presence channel ${channelName}`);
     // Example of how one might subscribe to a presence channel with Echo
     // This requires Echo to be configured for presence channels (e.g., using .join())
     // store.subscribe(channelName, '.here', (memberList: PresenceChannelMember[]) => { // This event name might differ
@@ -53,7 +52,6 @@ export function usePresenceChannel(channelName: string) {
   };
 
   const unsubscribe = () => {
-    logger.info(`[usePresenceChannel] Unsubscribing from presence channel ${channelName}`);
     // store.unsubscribe(channelName, '.here');
     // store.unsubscribe(channelName, '.joining');
     // store.unsubscribe(channelName, '.leaving');
@@ -71,9 +69,7 @@ export function usePresenceChannel(channelName: string) {
       logger.error(`[usePresenceChannel] Cannot whisper on ${channelName}. Not subscribed or WebSocket not connected.`);
       return;
     }
-    logger.info(`[usePresenceChannel] Whispering event '${eventName}' on ${channelName}`, data);
     // store.sendMessage(channelName, `client-${eventName}`, data); // Or specific whisper method if available
-    logger.warn(`[usePresenceChannel] Placeholder: Actual whisper logic for presence channel ${channelName} needs implementation.`);
   };
 
   onUnmounted(() => {
