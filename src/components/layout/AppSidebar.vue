@@ -157,6 +157,12 @@ const menuItems: MenuItem[] = [
     icon: "users",
     route: "/usuarios"
   },
+  // Exemplo
+  {
+    title: "Exemplo",
+    icon: "cube",
+    route: "/exemplos"
+  },
   {
     title: "Sair",
     icon: "signOut",

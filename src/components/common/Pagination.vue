@@ -1,4 +1,4 @@
-<template>
+]<template>
   <div v-if="totalPages >= 1" class="pagination-container">
     <div class="pagination-left">
       <div class="pagination-info">
@@ -101,7 +101,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  perPageOptions: () => [15, 30, 50, 100]
+  perPageOptions: () => [5,15, 30, 50, 100]
 })
 
 const emit = defineEmits<{

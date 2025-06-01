@@ -6,6 +6,13 @@ export const formatDate = (date?: string | Date): string => {
   return dateObj.toLocaleDateString('pt-BR', { timeZone: 'UTC' }); // Adicionado UTC para consistência
 };
 
+export const formatDateTime = (date?: string | Date): string => {
+  if (!date) return '-';
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  if (isNaN(dateObj.getTime())) return '-'; 
+  return dateObj.toLocaleString('pt-BR', { timeZone: 'UTC' });
+};
+
 export const formatCurrency = (value?: number): string => {
   if (value === undefined || value === null) return '-';
   return new Intl.NumberFormat('pt-BR', {

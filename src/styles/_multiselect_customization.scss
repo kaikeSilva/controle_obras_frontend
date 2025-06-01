@@ -1,0 +1,178 @@
+// Customização do componente @vueform/multiselect
+// Integração com o design system da aplicação
+
+// Variáveis específicas para o multiselect
+$multiselect-height: 38px;
+$multiselect-tag-bg: $primary-color-light;
+$multiselect-tag-color: $primary-color-dark;
+$multiselect-tag-remove-color: $primary-color-dark;
+$multiselect-tag-remove-hover: $error-color;
+$multiselect-option-selected-bg: $primary-color-light-5;
+$multiselect-option-hover-bg: $bg-gray-light;
+$multiselect-search-color: $text-color-dark;
+$multiselect-placeholder-color: $text-gray;
+
+// Seletor específico para o multiselect nos filtros
+div.multiselect.filter-select {
+  min-height: $multiselect-height;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  font-size: $font-size-sm;
+  box-shadow: none;
+  transition: border-color $transition-speed, box-shadow $transition-speed;
+  width: 100%;
+  padding: 0;
+  
+  &:focus, &:active, &.is-active {
+    border-color: $primary-color;
+    box-shadow: 0 0 0 1px rgba($primary-color, 0.2);
+    outline: none;
+  }
+  
+  // Container interno do multiselect
+  .multiselect-wrapper {
+    padding: 0;
+    min-height: $multiselect-height - 2px;
+  }
+  
+  // Área de seleção
+  .multiselect-search {
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-sm;
+    color: $multiselect-search-color;
+    margin: 0;
+    min-height: $multiselect-height - 2px;
+    
+    &::placeholder {
+      color: $multiselect-placeholder-color;
+    }
+  }
+  
+  // Placeholder
+  .multiselect-placeholder {
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-sm;
+    color: $multiselect-placeholder-color;
+    margin: 0;
+  }
+  
+  // Tags selecionadas
+  .multiselect-tag {
+    background-color: $multiselect-tag-bg;
+    color: $multiselect-tag-color;
+    font-size: $font-size-sm;
+    font-weight: 500;
+    padding: $spacing-xxs $spacing-xs;
+    border-radius: $border-radius-sm;
+    margin: $spacing-xxs;
+    display: inline-flex;
+    align-items: center;
+    
+    // Botão de remover tag
+    .multiselect-tag-remove {
+      margin-left: $spacing-xs;
+      color: $multiselect-tag-remove-color;
+      
+      &:hover {
+        color: $multiselect-tag-remove-hover;
+      }
+    }
+  }
+  
+  // Dropdown de opções
+  .multiselect-dropdown {
+    border: 1px solid $border-color;
+    border-radius: $border-radius-sm;
+    margin-top: $spacing-xs;
+    box-shadow: $shadow-sm;
+    background-color: $color-white;
+    z-index: 100;
+  }
+  
+  // Opções na lista
+  .multiselect-options {
+    padding: $spacing-xs 0;
+    margin: 0;
+    list-style: none;
+  }
+  
+  // Cada opção individual
+  .multiselect-option {
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-sm;
+    color: $text-color-dark;
+    cursor: pointer;
+    transition: background-color $transition-speed;
+    
+    &:hover {
+      background-color: $multiselect-option-hover-bg;
+    }
+    
+    // Opção selecionada
+    &.is-selected {
+      background-color: $multiselect-option-selected-bg;
+      color: $primary-color-dark;
+      font-weight: $font-weight-semibold;
+    }
+    
+    // Opção com pointer
+    &.is-pointed {
+      background-color: $multiselect-option-hover-bg;
+    }
+  }
+  
+  // Mensagens (sem opções, sem resultados)
+  .multiselect-no-options,
+  .multiselect-no-results {
+    padding: $spacing-sm;
+    color: $text-gray;
+    font-size: $font-size-sm;
+    text-align: center;
+  }
+  
+  // Ícones
+  .multiselect-caret {
+    width: $spacing-md;
+    height: $spacing-md;
+    mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 320 512' fill='currentColor' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z'%3E%3C/path%3E%3C/svg%3E");
+    mask-position: center;
+    mask-repeat: no-repeat;
+    background-color: $text-gray;
+    transition: transform $transition-speed;
+    margin: 0 $spacing-xs;
+    pointer-events: none;
+  }
+  
+  // Rotação do ícone quando aberto
+  &.is-open .multiselect-caret {
+    transform: rotate(180deg);
+  }
+  
+  // Ajustes para o modo tags
+  &.is-tags {
+    .multiselect-wrapper {
+      padding: $spacing-xxs;
+    }
+    
+    .multiselect-search {
+      margin: $spacing-xxs;
+      min-height: auto;
+      height: auto;
+      padding: $spacing-xxs $spacing-xs;
+    }
+  }
+}
+
+// Ajustes responsivos
+@media (max-width: $mobile-max) {
+  div.multiselect.filter-select {    
+    .multiselect-options {
+      max-height: calc(50vh - 40px);
+      overflow-y: auto;
+    }
+    
+    .multiselect-option {
+      padding: $spacing-sm $spacing-md;
+    }
+  }
+}

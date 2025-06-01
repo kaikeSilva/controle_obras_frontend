@@ -229,13 +229,46 @@ const router = createRouter({
           }
         },
         {
-          path: 'example/detail-base',
-          name: 'example-detail-base',
-          component: () => import('../views/examples/ExampleDetailView.vue'),
+          path: 'exemplos',
+          name: 'exemplos',
+          component: () => import('../views/exemplos/ExemploView.vue'),
           meta: {
-            title: 'Exemplo Detalhes Base',
-            breadcrumb: "Exemplo Detalhes Base",
+            title: 'Exemplos',
+            breadcrumb: "Exemplos",
             description: 'Veja os detalhes de um exemplo aqui',
+            requiresAuth: true
+          }
+        },
+        {
+          path: 'exemplos/novo',
+          name: 'new-exemplo',
+          component: () => import('../views/exemplos/ExemploFormView.vue'),
+          meta: {
+            title: 'Novo Exemplo',
+            description: 'Crie um novo exemplo aqui',
+            breadcrumb: "Novo Exemplo",
+            requiresAuth: true
+          }
+        },
+        {
+          path: 'exemplos/:id/editar',
+          name: 'edit-exemplo',
+          component: () => import('../views/exemplos/ExemploFormView.vue'),
+          meta: {
+            title: 'Editar Exemplo',
+            description: 'Edite um exemplo aqui',
+            breadcrumb: "Editar Exemplo",
+            requiresAuth: true
+          }
+        },
+        {
+          path: 'exemplos/:id',
+          name: 'exemplo-details',
+          component: () => import('../views/exemplos/ExemploDetailsView.vue'),
+          meta: {
+            title: 'Detalhes do Exemplo',
+            description: 'Veja os detalhes de um exemplo aqui',
+            breadcrumb: "Detalhes do Exemplo",
             requiresAuth: true
           }
         },

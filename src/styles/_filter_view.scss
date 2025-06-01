@@ -1,0 +1,175 @@
+// Filter Component Styles
+// Estilos padronizados para componentes de filtro baseados no ExemploFilter.vue
+
+// Container principal
+.filter-container {
+  background-color: $color-white;
+  border-radius: $border-radius;
+  box-shadow: $shadow-sm;
+  padding: $spacing-sm $spacing-md;
+  margin-bottom: 0;
+  flex: 1;
+}
+
+// Formulário de filtro
+.filter-form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+// Lado esquerdo do filtro (campos e botões principais)
+.filter-left {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  flex: 1;
+}
+
+// Grupos de filtro (campo + label)
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+// Labels dos filtros
+.filter-label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  margin-bottom: $spacing-xs;
+  color: $text-gray-dark;
+}
+
+// Inputs e selects de filtro
+.filter-input,
+.filter-select {
+  padding: $spacing-sm $spacing-md;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  font-size: $font-size-sm;
+  width: 100%;
+  outline: none;
+  transition: border-color $transition-speed;
+  color: $text-color-dark;
+  
+  &:focus {
+    border-color: $primary-color;
+  }
+}
+
+// Container para botões de ação
+.filter-actions {
+  display: flex;
+  gap: $spacing-xs;
+}
+
+// Estilo base para botões de filtro
+.filter-button {
+  padding: $spacing-sm $spacing-md;
+  border: none;
+  border-radius: $border-radius;
+  font-size: $font-size-sm;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color $transition-speed;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// Botão de limpar filtros
+.filter-button-clear {
+  background-color: $bg-gray-light;
+  color: $text-gray;
+  
+  &:hover:not(:disabled) {
+    background-color: $border-color;
+  }
+}
+
+// Botão de aplicar filtros
+.filter-button-apply {
+  background-color: $primary-color;
+  color: $color-white;
+  font-weight: $font-weight-semibold;
+  
+  &:hover {
+    background-color: $primary-color-dark;
+  }
+}
+
+// Lado direito do filtro (botões secundários)
+.filter-right {
+  display: flex;
+  gap: $spacing-xs;
+}
+
+// Botão de filtros avançados
+.filter-button-advanced {
+  background-color: $bg-gray-light;
+  color: $text-gray;
+  
+  &:hover {
+    background-color: $border-color;
+  }
+}
+
+// Ícones dentro dos filtros
+.filter-icon {
+  width: $icon-size;
+  height: $icon-size;
+  display: inline-flex;
+  transition: transform $transition-speed;
+}
+
+// Classe para rotacionar ícones
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
+// Container de filtros avançados
+.advanced-filters {
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px solid $border-color;
+}
+
+// Linha de filtros avançados
+.filter-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $spacing-md;
+}
+
+// Responsividade para dispositivos móveis
+@media (max-width: $mobile-max) {
+  .filter-form {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .filter-left {
+    width: 100%;
+    margin-bottom: $spacing-sm;
+  }
+  
+  .filter-right {
+    width: 100%;
+  }
+  
+  .filter-button-advanced {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .filter-row {
+    grid-template-columns: 1fr;
+  }
+}
