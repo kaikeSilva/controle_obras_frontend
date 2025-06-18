@@ -30,3 +30,17 @@ jobs:
           tags: kaikesilva/controleobrasfrontend:latest
           context: .
           file: ./Dockerfile.production
+
+  deploy:
+    needs: build  # Só roda depois que a imagem for publicada
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          run: |
+            docker pull kaikesilva/controleobrasfrontend:latest
+            docker compose -f /home/kaikesilva/controle_obras/controle_obras_frontend-vue/docker-compose.production.yml up -d
