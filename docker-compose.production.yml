@@ -9,7 +9,24 @@ services:
     env_file:
       - .env
     ports:
-      - "5200:80"
+      - "127.0.0.1:3000:80"
     restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.controleobrasfrontend-http.rule=Host(`gestao.controleobras.online`)
+      - traefik.http.routers.controleobrasfrontend-http.entrypoints=http
+      - traefik.http.routers.controleobrasfrontend-http.middlewares=https-redirect
+      - traefik.http.routers.controleobrasfrontend-https.rule=Host(`gestao.controleobras.online`)
+      - traefik.http.routers.controleobrasfrontend-https.entrypoints=https
+      - traefik.http.routers.controleobrasfrontend-https.tls=true
+      - traefik.http.routers.controleobrasfrontend-https.tls.certresolver=le
+      - traefik.http.routers.controleobrasfrontend-https.service=controleobrasfrontend-service
+      - traefik.http.services.controleobrasfrontend-service.loadbalancer.server.port=3000
+
+networks:
+  default:
+    name: traefik-public
+    external: true
+
 # build: docker compose -f docker-compose.production.yml build
 # push: docker compose -f docker-compose.production.yml push
