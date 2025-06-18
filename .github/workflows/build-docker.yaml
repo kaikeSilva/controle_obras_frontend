@@ -41,6 +41,6 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          run: |
+          script: |
             docker pull kaikesilva/controleobrasfrontend:latest
-            docker compose -f /home/kaikesilva/controle_obras/controle_obras_frontend-vue/docker-compose.production.yml up -d
+            docker compose -f /home/deployuser/projects/controle_obras/controle_obras_frontend/docker-compose.production.yml up -d
