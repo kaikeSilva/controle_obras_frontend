@@ -1,14 +1,22 @@
 version: '3.8'
-
 services:
   vue-app:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
     container_name: meu-vue-app
     restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.controleobrasfrontend-http.rule=Host(`gestao.controleobras.online`)
+      - traefik.http.routers.controleobrasfrontend-http.entrypoints=http
+      - traefik.http.routers.controleobrasfrontend-http.middlewares=https-redirect
+      - traefik.http.routers.controleobrasfrontend-https.rule=Host(`gestao.controleobras.online`)
+      - traefik.http.routers.controleobrasfrontend-https.entrypoints=https
+      - traefik.http.routers.controleobrasfrontend-https.tls=true
+      - traefik.http.routers.controleobrasfrontend-https.tls.certresolver=le
+      - traefik.http.routers.controleobrasfrontend-https.service=controleobrasfrontend-service
+      - traefik.http.services.controleobrasfrontend-service.loadbalancer.server.port=3000
     volumes:
       - ./:/app
       - /app/node_modules
@@ -19,3 +27,7 @@ services:
       - VITE_REVERB_SCHEME=ws
       - VITE_REVERB_CLUSTER=mt1
       - CHOKIDAR_USEPOLLING=true
+networks:
+  default:
+    name: traefik-public
+    external: true
