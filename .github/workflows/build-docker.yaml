@@ -1,5 +1,5 @@
 # build-docker image and push to dockerhub
-name: Build Docker Image
+name: build_production_image
 
 on:
   push:
