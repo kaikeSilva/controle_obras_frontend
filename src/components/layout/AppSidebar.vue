@@ -2,7 +2,7 @@
   <aside class="app-sidebar" :class="sidebarClasses">
     <div class="sidebar-header">
       <IconCube class="logo" :size="32" />
-      <span class="brand-name" v-if="!layoutStore.isSidebarCollapsed">Obras ADM teste</span>
+      <span class="brand-name" v-if="!layoutStore.isSidebarCollapsed">Obras ADM sem codigo</span>
       
       <!-- Botão para fechar o menu no mobile -->
       <button 
