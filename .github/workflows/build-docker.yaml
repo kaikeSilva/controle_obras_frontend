@@ -13,6 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+        # Dockerfile.production and docker-compose.production.yml should be used
       - name: Checkout
         uses: actions/checkout@v4
       - name: Set up Docker Buildx
@@ -27,3 +28,5 @@ jobs:
         with:
           push: true
           tags: kaikesilva/controleobrasfrontend:latest
+          context: .
+          file: ./Dockerfile.production
