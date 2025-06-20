@@ -3,8 +3,16 @@
     <!-- PDF Controls -->
     <div class="pdf-controls">
       <button @click="generatePDF" :disabled="isGeneratingPdf" class="pdf-button">
-        <span v-if="isGeneratingPdf">Gerando PDF...</span>
+        <span v-if="isGeneratingPdf && pdfStatus === 'pending'">Solicitando relatório...</span>
+        <span v-else-if="isGeneratingPdf && pdfStatus === 'processing'">Gerando PDF, aguarde...</span>
         <span v-else>📄 Gerar PDF</span>
+      </button>
+      <button 
+        v-if="isGeneratingPdf && pdfStatus === 'processing'" 
+        @click="cancelPdfGeneration" 
+        class="cancel-button"
+      >
+        Cancelar
       </button>
     </div>
     
@@ -135,6 +143,9 @@ const isLoading = ref(false)
 const error = ref<string | null>(null)
 const dashboardData = ref<DashboardData | null>(null)
 const obraData = ref<Obra | null>(null)
+const pdfStatus = ref<'pending' | 'processing' | 'completed' | 'error'>('pending')
+const pdfFilename = ref<string | null>(null)
+const pdfPollingInterval = ref<number | null>(null)
 
 // Estado para os gastos
 const isLoadingGastos = ref(false)
@@ -219,45 +230,88 @@ async function fetchGastos() {
   }
 }
 
-// Método para gerar PDF usando a API do backend
+// Método para gerar PDF usando o fluxo assíncrono da API do backend
 const generatePDF = async () => {
   if (isGeneratingPdf.value) return
   
   isGeneratingPdf.value = true
+  pdfStatus.value = 'pending'
   
   try {
-    // Usar os mesmos filtros que são usados para o dashboard
-    const pdfBlob = await obrasService.gerarRelatorioPDF(dashboardStore.filtros)
+    // 1. Solicitar a geração do PDF
+    pdfFilename.value = await obrasService.solicitarRelatorioPDF(dashboardStore.filtros)
     
-    if (!pdfBlob) {
-      throw new Error('Não foi possível gerar o PDF')
+    if (!pdfFilename.value) {
+      throw new Error('Não foi possível iniciar a geração do PDF')
     }
     
-    // Criar URL para o blob e fazer download
-    const url = window.URL.createObjectURL(pdfBlob)
-    const link = document.createElement('a')
-    link.href = url
+    // 2. Atualizar status para processando
+    pdfStatus.value = 'processing'
     
-    // Nome do arquivo
-    const obraNome = obraData.value?.nome || 'obra'
-    const fileName = `relatorio-${obraNome.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().split('T')[0]}.pdf`
-    link.download = fileName
+    // 3. Verificar status periodicamente até completar
+    const downloadUrl = await aguardarPDF(pdfFilename.value)
     
-    // Simular clique para iniciar o download
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    
-    // Liberar o objeto URL
-    window.URL.revokeObjectURL(url)
+    // 4. Iniciar o download quando estiver pronto
+    window.location.href = downloadUrl
     
     notificationStore.addNotification('PDF gerado com sucesso!', 'success')
+    pdfStatus.value = 'completed'
   } catch (error) {
     console.error('Erro ao gerar PDF:', error)
     notificationStore.addNotification('Erro ao gerar PDF. Tente novamente.', 'error')
+    pdfStatus.value = 'error'
   } finally {
     isGeneratingPdf.value = false
   }
+}
+
+// Função para cancelar a geração do PDF
+const cancelPdfGeneration = () => {
+  if (pdfPollingInterval.value) {
+    clearInterval(pdfPollingInterval.value)
+    pdfPollingInterval.value = null
+  }
+  
+  isGeneratingPdf.value = false
+  pdfStatus.value = 'pending'
+  notificationStore.addNotification('Geração de PDF cancelada', 'info')
+}
+
+// Função para verificar o status periodicamente até o PDF estar pronto
+const aguardarPDF = async (filename: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    // Limpar qualquer intervalo existente
+    if (pdfPollingInterval.value) {
+      clearInterval(pdfPollingInterval.value)
+    }
+    
+    // Criar novo intervalo de polling
+    pdfPollingInterval.value = window.setInterval(async () => {
+      try {
+        const statusResponse = await obrasService.verificarStatusRelatorioPDF(filename)
+        
+        if (statusResponse.status === 'completed' && statusResponse.download_url) {
+          if (pdfPollingInterval.value) {
+            clearInterval(pdfPollingInterval.value)
+            pdfPollingInterval.value = null
+          }
+          resolve(statusResponse.download_url)
+        } else if (statusResponse.status === 'error') {
+          if (pdfPollingInterval.value) {
+            clearInterval(pdfPollingInterval.value)
+            pdfPollingInterval.value = null
+          }
+          reject(new Error('Erro ao gerar o PDF no servidor'))
+        }
+      } catch (error) {
+        if (pdfPollingInterval.value) {
+          clearInterval(pdfPollingInterval.value)
+          pdfPollingInterval.value = null
+        }
+        reject(error)
+      }
+    }, 2000) // Verificar a cada 2 segundos
+  })
 }
 
 // Inicializar o carregamento dos dados
@@ -284,6 +338,7 @@ onMounted(async () => {
   margin-bottom: 20px;
   display: flex;
   justify-content: flex-end;
+  gap: 10px;
   
   .pdf-button {
     background-color: #dc2626;
@@ -308,6 +363,25 @@ onMounted(async () => {
       cursor: not-allowed;
       transform: none;
       box-shadow: 0 2px 4px rgba(220, 38, 38, 0.1);
+    }
+  }
+  
+  .cancel-button {
+    background-color: #6b7280;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(107, 114, 128, 0.2);
+    
+    &:hover {
+      background-color: #4b5563;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(107, 114, 128, 0.3);
     }
   }
 }

@@ -27,9 +27,3 @@ networks:
   default:
     name: traefik-public
     external: true
-
-# build: docker compose -f docker-compose.production.yml build
-# push: docker compose -f docker-compose.production.yml push
-
-# docker pull kaikesilva/controleobrasfrontend:latest
-# docker compose -f docker-compose.production.yml up -d
