@@ -29,8 +29,8 @@ jobs:
           push: true
           tags: kaikesilva/controleobrasfrontend:latest
           context: .
-          build-args:
-            VITE_API_BASE_URL='https://web.controleobras.online/api'
+          build-args: | 
+            VITE_API_BASE_URL=https://web.controleobras.online/api
           file: ./Dockerfile.production
 
   deploy:
