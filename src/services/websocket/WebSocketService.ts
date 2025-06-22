@@ -64,9 +64,10 @@ export class WebSocketService {
     if (!this.echo) {
       throw new Error('WebSocket não conectado');
     }
-
-    
-    this.echo.channel(channel).listen(event, (data: any) => {
+    const eventName = event.startsWith('.') ? event : `.${event}`;
+    console.log('Subscrevendo canal:', channel, 'evento:', eventName);
+    this.echo.channel(channel).listen(eventName, (data: any) => {
+      console.log('Mensagem recebida:', data);
       const message: WebSocketMessage = {
         id: crypto.randomUUID(),
         channel,
@@ -74,6 +75,7 @@ export class WebSocketService {
         data,
         timestamp: new Date(),
       };
+      console.log('Mensagem recebida:', message);
       this.state.messages.push(message);
       this.eventBus.emit(WEBSOCKET_EVENTS.MESSAGE_RECEIVED, message);
       callback(data);

@@ -28,7 +28,24 @@ export const useWebSocketStore = defineStore('websocket', () => {
       logger.error('Pinia Store: Service not initialized before connect.');
       return;
     }
-    await serviceInstance.connect();
+    
+    // Debug: Mostrar configuração do WebSocket
+    console.log('[WebSocket Debug] Tentando conectar com configuração:', {
+      config: serviceInstance.config,
+      socketId: serviceInstance.state.socketId,
+      status: serviceInstance.state.status
+    });
+    
+    try {
+      await serviceInstance.connect();
+      console.log('[WebSocket Debug] Conexão bem-sucedida:', {
+        socketId: serviceInstance.state.socketId,
+        status: serviceInstance.state.status,
+        isConnected: serviceInstance.state.isConnected
+      });
+    } catch (error) {
+      console.error('[WebSocket Debug] Erro na conexão:', error);
+    }
   };
 
   const disconnect = () => {
@@ -37,7 +54,11 @@ export const useWebSocketStore = defineStore('websocket', () => {
   };
 
   const subscribe = (channel: string, event: string, callback: (data: any) => void) => {
-    if (!serviceInstance) return;
+    if (!serviceInstance) {
+      console.warn('[WebSocket Debug] Tentativa de subscribe sem serviceInstance:', { channel, event });
+      return;
+    }
+    console.log('[WebSocket Debug] Subscribing:', { channel, event });
     serviceInstance.subscribe(channel, event, callback);
   };
 
@@ -52,15 +73,32 @@ export const useWebSocketStore = defineStore('websocket', () => {
   };
   
   eventBus.on(WEBSOCKET_EVENTS.CONNECTED, ({ socketId }) => {
-    if (serviceInstance) Object.assign(state, serviceInstance.state);
+    if (serviceInstance) {
+      Object.assign(state, serviceInstance.state);
+      console.log('[WebSocket Debug] Evento CONNECTED:', {
+        socketId,
+        state: { ...serviceInstance.state }
+      });
+    }
   });
 
   eventBus.on(WEBSOCKET_EVENTS.DISCONNECTED, () => {
-    if (serviceInstance) Object.assign(state, serviceInstance.state);
+    if (serviceInstance) {
+      Object.assign(state, serviceInstance.state);
+      console.log('[WebSocket Debug] Evento DISCONNECTED:', {
+        state: { ...serviceInstance.state }
+      });
+    }
   });
 
   eventBus.on(WEBSOCKET_EVENTS.ERROR, (error) => {
-    if (serviceInstance) Object.assign(state, serviceInstance.state);
+    if (serviceInstance) {
+      Object.assign(state, serviceInstance.state);
+      console.error('[WebSocket Debug] Evento ERROR:', {
+        error,
+        state: { ...serviceInstance.state }
+      });
+    }
   });
 
   eventBus.on(WEBSOCKET_EVENTS.MESSAGE_RECEIVED, (message: WebSocketMessage) => {

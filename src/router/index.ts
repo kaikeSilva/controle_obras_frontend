@@ -316,6 +316,17 @@ const router = createRouter({
             breadcrumb: "Detalhes da Entrada de Recurso",
             requiresAuth: true
           }
+        },
+        {
+          path: 'websocket-test',
+          name: 'websocket-test',
+          component: () => import('../views/WebSocketTestView.vue'),
+          meta: {
+            title: 'Teste de WebSocket',
+            description: 'Teste a conexão WebSocket',
+            breadcrumb: "Teste de WebSocket",
+            requiresAuth: true
+          }
         }
       ]
     },

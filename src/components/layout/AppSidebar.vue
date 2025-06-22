@@ -164,6 +164,11 @@ const menuItems: MenuItem[] = [
     route: "/exemplos"
   },
   {
+    title: "Teste de WebSocket",
+    icon: "cube",
+    route: "/websocket-test"
+  },
+  {
     title: "Sair",
     icon: "signOut",
     action: "logout"

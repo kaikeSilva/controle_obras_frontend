@@ -4,17 +4,20 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.development
+      args:
+        - VITE_REVERB_APP_KEY
+        - VITE_REVERB_HOST
+        - VITE_REVERB_PORT
+        - VITE_REVERB_SCHEME
+        - VITE_REVERB_CLUSTER
     container_name: meu-vue-app
+    env_file:
+      - .env
     restart: unless-stopped
     volumes:
       - ./:/app
       - /app/node_modules
     environment:
-      - VITE_REVERB_APP_KEY=rpfnh21jtr3szlu5frah
-      - VITE_REVERB_HOST=localhost
-      - VITE_REVERB_PORT=6001
-      - VITE_REVERB_SCHEME=ws
-      - VITE_REVERB_CLUSTER=mt1
       - CHOKIDAR_USEPOLLING=true
     ports:
       - 3000:3000

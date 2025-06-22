@@ -2,10 +2,10 @@ import type { WebSocketConfig } from './types';
 
 export const createWebSocketConfig = (): WebSocketConfig => ({
   broadcaster: 'reverb',
-  key: import.meta.env.VITE_REVERB_APP_KEY || 'rpfnh21jtr3szlu5frah',
+  key: import.meta.env.VITE_REVERB_APP_KEY || 'demo_key',
   wsHost: import.meta.env.VITE_REVERB_HOST || 'localhost',
-  wsPort: parseInt(import.meta.env.VITE_REVERB_PORT || '6001', 10),
-  wssPort: parseInt(import.meta.env.VITE_REVERB_PORT || '6001', 10),
+  wsPort: parseInt(import.meta.env.VITE_REVERB_PORT || '8087', 10),
+  wssPort: parseInt(import.meta.env.VITE_REVERB_PORT || '8087', 10),
   forceTLS: import.meta.env.VITE_REVERB_SCHEME === 'https',
   enabledTransports: ['ws', 'wss'],
   cluster: import.meta.env.VITE_REVERB_CLUSTER || 'mt1',
@@ -13,6 +13,10 @@ export const createWebSocketConfig = (): WebSocketConfig => ({
   logToConsole: import.meta.env.DEV,
   reconnectAttempts: 5,
   reconnectInterval: 3000,
+  // Configurar o endpoint de autenticação para canais privados
+  authEndpoint: import.meta.env.VITE_API_URL 
+    ? `${import.meta.env.VITE_API_URL}/broadcasting/auth` 
+    : 'http://localhost:8000/broadcasting/auth',
 });
 
 export const WEBSOCKET_EVENTS = {

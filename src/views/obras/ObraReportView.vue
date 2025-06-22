@@ -2,13 +2,12 @@
   <div class="obra-report-container">
     <!-- PDF Controls -->
     <div class="pdf-controls">
-      <button @click="generatePDF" :disabled="isGeneratingPdf" class="pdf-button">
-        <span v-if="isGeneratingPdf && pdfStatus === 'pending'">Solicitando relatório...</span>
-        <span v-else-if="isGeneratingPdf && pdfStatus === 'processing'">Gerando PDF, aguarde...</span>
+      <button @click="generatePDF" :disabled="isGenerating" class="pdf-button">
+        <span v-if="isGenerating">{{ pdfWebSocket.pdfJobState.currentStep || 'Gerando PDF...' }}</span>
         <span v-else>📄 Gerar PDF</span>
       </button>
       <button 
-        v-if="isGeneratingPdf && pdfStatus === 'processing'" 
+        v-if="isGenerating" 
         @click="cancelPdfGeneration" 
         class="cancel-button"
       >
@@ -118,6 +117,18 @@
         </div>
       </div>
     </div>
+    
+    <!-- Modal de progresso do PDF -->
+    <PdfProgressModal
+      :show="showPdfModal"
+      :pdf-state="pdfWebSocket.pdfJobState"
+      title="Gerando Relatório PDF"
+      :can-close="!pdfWebSocket.isGenerating"
+      :show-cancel-button="pdfWebSocket.isGenerating"
+      @close="handleCloseModal"
+      @cancel="cancelPdfGeneration"
+      @retry="handleRetryPdf"
+    />
   </div>
 </template>
 
@@ -128,7 +139,11 @@ import DashboardCard from '@/components/dashboard/DashboardCard.vue'
 import DashboardMonthEvolution from '@/components/dashboard/DashboardMonthEvolution.vue'
 import ObraReportHeader from '@/components/obras/ObraReportHeader.vue'
 import ObraReportFilter from '@/components/obras/ObraReportFilter.vue'
+import PdfProgressModal from '@/components/pdf/PdfProgressModal.vue'
 import { obrasService } from '@/services/obrasService'
+import { pdfReportService } from '@/services/pdfReportService'
+import { usePdfWebSocket } from '@/composables/usePdfWebSocket'
+import { useWebSocketStore } from '@/stores/websocket'
 import type { Obra } from '@/types/obra.types'
 import type { Gasto, PaginationMeta } from '@/types/gasto.types'
 import { useDashboardStore } from '@/stores/dashboardStore'
@@ -138,14 +153,11 @@ import { useGastosStore } from '@/stores/gastosStore'
 const route = useRoute()
 const router = useRouter()
 const pdfContent = ref<HTMLElement | null>(null)
-const isGeneratingPdf = ref(false)
 const isLoading = ref(false)
 const error = ref<string | null>(null)
 const dashboardData = ref<DashboardData | null>(null)
 const obraData = ref<Obra | null>(null)
-const pdfStatus = ref<'pending' | 'processing' | 'completed' | 'error'>('pending')
-const pdfFilename = ref<string | null>(null)
-const pdfPollingInterval = ref<number | null>(null)
+const showPdfModal = ref(false)
 
 // Estado para os gastos
 const isLoadingGastos = ref(false)
@@ -154,6 +166,11 @@ const currentPage = ref(1)
 const dashboardStore = useDashboardStore()
 const notificationStore = useNotificationStore()
 const gastosStore = useGastosStore()
+const webSocketStore = useWebSocketStore()
+const pdfWebSocket = usePdfWebSocket()
+
+// Computed para facilitar acesso ao estado de geração do PDF
+const isGenerating = computed(() => pdfWebSocket.isGenerating.value)
 // Obter o ID da obra da rota
 const obraId = computed(() => {
   return route.params.id ? Number(route.params.id) : null
@@ -230,88 +247,103 @@ async function fetchGastos() {
   }
 }
 
-// Método para gerar PDF usando o fluxo assíncrono da API do backend
+// Método para gerar PDF usando WebSocket para monitoramento em tempo real
 const generatePDF = async () => {
-  if (isGeneratingPdf.value) return
+  // Verificar se já está gerando um PDF
+  if (pdfWebSocket.isGenerating.value) {
+    console.log('[PDF Debug] Tentativa de gerar PDF enquanto já está em andamento')
+    return
+  }
   
-  isGeneratingPdf.value = true
-  pdfStatus.value = 'pending'
+  // Garantir que o estado esteja limpo antes de iniciar
+  pdfWebSocket.stopMonitoring()
   
   try {
-    // 1. Solicitar a geração do PDF
-    pdfFilename.value = await obrasService.solicitarRelatorioPDF(dashboardStore.filtros)
+    console.log('[PDF Debug] Iniciando geração de PDF')
     
-    if (!pdfFilename.value) {
+    // 1. Verificar se o WebSocket está conectado
+    if (!webSocketStore.isConnected) {
+      console.log('[PDF Debug] WebSocket não conectado, tentando conectar')
+      await webSocketStore.connect()
+    }
+    
+    // 2. Inicializar os listeners do WebSocket para eventos de PDF
+    pdfWebSocket.initializePdfListeners()
+    
+    // 3. Solicitar a geração do PDF
+    const response = await pdfReportService.solicitarRelatorioPDF(dashboardStore.filtros)
+    
+    if (!response.job_id) {
       throw new Error('Não foi possível iniciar a geração do PDF')
     }
     
-    // 2. Atualizar status para processando
-    pdfStatus.value = 'processing'
+    console.log('[PDF Debug] Job ID recebido:', response.job_id)
     
-    // 3. Verificar status periodicamente até completar
-    const downloadUrl = await aguardarPDF(pdfFilename.value)
+    // 4. Iniciar o monitoramento do job via WebSocket
+    pdfWebSocket.startMonitoring(response.job_id)
     
-    // 4. Iniciar o download quando estiver pronto
-    window.location.href = downloadUrl
+    // 5. Mostrar o modal de progresso
+    showPdfModal.value = true
     
-    notificationStore.addNotification('PDF gerado com sucesso!', 'success')
-    pdfStatus.value = 'completed'
+    // Notificação inicial
+    notificationStore.addNotification('Geração de PDF iniciada', 'info')
   } catch (error) {
-    console.error('Erro ao gerar PDF:', error)
-    notificationStore.addNotification('Erro ao gerar PDF. Tente novamente.', 'error')
-    pdfStatus.value = 'error'
-  } finally {
-    isGeneratingPdf.value = false
+    console.error('Erro ao solicitar geração de PDF:', error)
+    notificationStore.addNotification('Erro ao iniciar geração do PDF. Tente novamente.', 'error')
+    // Garantir que o estado seja limpo em caso de erro
+    pdfWebSocket.stopMonitoring()
   }
 }
 
 // Função para cancelar a geração do PDF
-const cancelPdfGeneration = () => {
-  if (pdfPollingInterval.value) {
-    clearInterval(pdfPollingInterval.value)
-    pdfPollingInterval.value = null
+const cancelPdfGeneration = async () => {
+  try {
+    if (pdfWebSocket.pdfJobState.jobId) {
+      await pdfReportService.cancelarRelatorio(pdfWebSocket.pdfJobState.jobId)
+      pdfWebSocket.stopMonitoring()
+      showPdfModal.value = false
+      notificationStore.addNotification('Geração de PDF cancelada', 'info')
+    }
+  } catch (error) {
+    console.error('Erro ao cancelar geração de PDF:', error)
+    notificationStore.addNotification('Erro ao cancelar o PDF', 'error')
   }
-  
-  isGeneratingPdf.value = false
-  pdfStatus.value = 'pending'
-  notificationStore.addNotification('Geração de PDF cancelada', 'info')
 }
 
-// Função para verificar o status periodicamente até o PDF estar pronto
-const aguardarPDF = async (filename: string): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    // Limpar qualquer intervalo existente
-    if (pdfPollingInterval.value) {
-      clearInterval(pdfPollingInterval.value)
-    }
-    
-    // Criar novo intervalo de polling
-    pdfPollingInterval.value = window.setInterval(async () => {
-      try {
-        const statusResponse = await obrasService.verificarStatusRelatorioPDF(filename)
-        
-        if (statusResponse.status === 'completed' && statusResponse.download_url) {
-          if (pdfPollingInterval.value) {
-            clearInterval(pdfPollingInterval.value)
-            pdfPollingInterval.value = null
-          }
-          resolve(statusResponse.download_url)
-        } else if (statusResponse.status === 'error') {
-          if (pdfPollingInterval.value) {
-            clearInterval(pdfPollingInterval.value)
-            pdfPollingInterval.value = null
-          }
-          reject(new Error('Erro ao gerar o PDF no servidor'))
-        }
-      } catch (error) {
-        if (pdfPollingInterval.value) {
-          clearInterval(pdfPollingInterval.value)
-          pdfPollingInterval.value = null
-        }
-        reject(error)
-      }
-    }, 2000) // Verificar a cada 2 segundos
-  })
+// Função para fechar o modal e limpar o estado quando necessário
+const handleCloseModal = () => {
+  // Se o PDF foi gerado com sucesso, não limpar o estado para permitir download
+  if (!pdfWebSocket.isCompleted.value) {
+    pdfWebSocket.stopMonitoring()
+  }
+  showPdfModal.value = false
+}
+
+// Função para iniciar download do PDF quando estiver pronto
+const handleDownloadPdf = () => {
+  if (pdfWebSocket.pdfJobState.filename) {
+    // Usar o novo método getDownloadUrl para obter a URL correta de download
+    const downloadUrl = pdfReportService.getDownloadUrl(pdfWebSocket.pdfJobState.filename)
+    console.log('[PDF Download] URL de download:', downloadUrl)
+    window.open(downloadUrl, '_blank')
+  } else if (pdfWebSocket.pdfJobState.downloadUrl) {
+    // Fallback para compatibilidade
+    console.log('[PDF Download] Usando URL direta:', pdfWebSocket.pdfJobState.downloadUrl)
+    window.open(pdfWebSocket.pdfJobState.downloadUrl, '_blank')
+  } else {
+    console.error('[PDF Download] Nenhum arquivo disponível para download')
+    notificationStore.addNotification('Arquivo PDF não disponível para download', 'error')
+  }
+}
+
+// Função para tentar novamente em caso de falha
+const handleRetryPdf = () => {
+  pdfWebSocket.stopMonitoring()
+  showPdfModal.value = false
+  // Pequeno timeout para garantir que tudo foi limpo antes de tentar novamente
+  setTimeout(() => {
+    generatePDF()
+  }, 500)
 }
 
 // Inicializar o carregamento dos dados
@@ -319,6 +351,19 @@ onMounted(async () => {
   if (!obraId.value) {
     router.push('/obras')
     return
+  }
+  
+  // Garantir que o estado do PDF esteja limpo ao montar o componente
+  pdfWebSocket.stopMonitoring()
+  showPdfModal.value = false
+  
+  // Conectar ao WebSocket se ainda não estiver conectado
+  if (!webSocketStore.isConnected) {
+    try {
+      await webSocketStore.connect()
+    } catch (error) {
+      console.error('Erro ao conectar ao WebSocket:', error)
+    }
   }
   
   await fetchObraData()
