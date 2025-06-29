@@ -1,5 +1,9 @@
 import type { WebSocketConfig } from './types';
 
+const token = localStorage.getItem('auth_token');
+
+console.log('Token no config:', token);
+
 export const createWebSocketConfig = (): WebSocketConfig => ({
   broadcaster: 'reverb',
   key: import.meta.env.VITE_REVERB_APP_KEY || 'demo_key',
@@ -15,8 +19,11 @@ export const createWebSocketConfig = (): WebSocketConfig => ({
   reconnectInterval: 3000,
   // Configurar o endpoint de autenticação para canais privados
   authEndpoint: import.meta.env.VITE_API_URL 
-    ? `${import.meta.env.VITE_API_URL}/broadcasting/auth` 
-    : 'http://localhost:8000/broadcasting/auth',
+    ? `${import.meta.env.VITE_API_URL}/api/broadcasting/auth` 
+    : 'http://localhost:8000/api/broadcasting/auth',
+  authHeaders: {
+    Authorization: `Bearer ${token}`,
+  },
 });
 
 export const WEBSOCKET_EVENTS = {

@@ -31,7 +31,7 @@ export function usePdfWebSocket() {
   // Computed para canal do usuário
   const userChannel = computed(() => {
     const userId = authStore.user?.id
-    return userId ? `private-pdf.${userId}` : null
+    return userId ? `pdf.${userId}` : null
   })
 
   // Função para inicializar listeners

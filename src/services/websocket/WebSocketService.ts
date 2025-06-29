@@ -41,6 +41,9 @@ export class WebSocketService {
       }
 
       this.echo = new Echo(this.config as any); // Cast to any due to Echo types
+      console.log('Echo:', this.echo);
+      // console das configurações
+      console.log('Config:', this.config);  
       await this.setupConnectionHandlers();
       
     } catch (error) {
@@ -60,12 +63,15 @@ export class WebSocketService {
     this.eventBus.emit(WEBSOCKET_EVENTS.DISCONNECTED);
   }
 
+  /**
+   * Inscreve-se em um canal público
+   */
   subscribe(channel: string, event: string, callback: (data: any) => void): void {
     if (!this.echo) {
       throw new Error('WebSocket não conectado');
     }
     const eventName = event.startsWith('.') ? event : `.${event}`;
-    console.log('Subscrevendo canal:', channel, 'evento:', eventName);
+    console.log('Subscrevendo canal público:', channel, 'evento:', eventName);
     this.echo.channel(channel).listen(eventName, (data: any) => {
       console.log('Mensagem recebida:', data);
       const message: WebSocketMessage = {
@@ -81,7 +87,48 @@ export class WebSocketService {
       callback(data);
     });
   }
+  
+  /**
+   * Inscreve-se em um canal privado
+   * 
+   * Canais privados requerem autenticação via endpoint /broadcasting/auth
+   * O nome do canal deve começar com 'private-'
+   */
+  subscribePrivate(channel: string, event: string, callback: (data: any) => void): void {
+    if (!this.echo) {
+      throw new Error('WebSocket não conectado');
+    }
+    
+    // Remover private pois o metodo do echo ja adiciona
+    const privateChannel = channel;
+    const eventName = event.startsWith('.') ? event : `.${event}`;
+    
+    console.log('Subscrevendo canal privado:', privateChannel, 'evento:', eventName);
+    
+    try {
+      this.echo.private(privateChannel).listen(eventName, (data: any) => {
+        console.log('Mensagem privada recebida:', data);
+        const message: WebSocketMessage = {
+          id: crypto.randomUUID(),
+          channel: privateChannel,
+          event,
+          data,
+          timestamp: new Date(),
+        };
+        this.state.messages.push(message);
+        this.eventBus.emit(WEBSOCKET_EVENTS.MESSAGE_RECEIVED, message);
+        callback(data);
+      });
+    } catch (error) {
+      console.error('Erro ao inscrever-se em canal privado:', error);
+      this.handleConnectionError(error as Error);
+      throw error;
+    }
+  }
 
+  /**
+   * Cancela a inscrição em um canal (público ou privado)
+   */
   unsubscribe(channel: string, event?: string): void {
     if (!this.echo) {
       return;
@@ -90,6 +137,24 @@ export class WebSocketService {
       this.echo.channel(channel).stopListening(event);
     } else {
       this.echo.leaveChannel(channel);
+    }
+  }
+  
+  /**
+   * Cancela a inscrição em um canal privado
+   */
+  unsubscribePrivate(channel: string, event?: string): void {
+    if (!this.echo) {
+      return;
+    }
+    
+    // Remover private pois o metodo do echo ja adiciona
+    const privateChannel = channel;
+    
+    if (event) {
+      this.echo.private(privateChannel).stopListening(event);
+    } else {
+      this.echo.leaveChannel(privateChannel);
     }
   }
 

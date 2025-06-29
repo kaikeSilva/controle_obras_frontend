@@ -30,6 +30,7 @@ setupInterceptors();
 
 // Initialize WebSocket Service
 const wsConfig = createWebSocketConfig();
+console.log('WebSocket config:', wsConfig);
 const webSocketService = new WebSocketService(wsConfig, eventBus, logger);
 
 // Make the service available to stores or globally if needed

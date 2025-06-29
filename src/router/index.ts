@@ -320,7 +320,7 @@ const router = createRouter({
         {
           path: 'websocket-test',
           name: 'websocket-test',
-          component: () => import('../views/WebSocketTestView.vue'),
+          component: () => import('../views/websocketTests/WebSocketTestView.vue'),
           meta: {
             title: 'Teste de WebSocket',
             description: 'Teste a conexão WebSocket',

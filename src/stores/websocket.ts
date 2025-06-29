@@ -58,8 +58,8 @@ export const useWebSocketStore = defineStore('websocket', () => {
       console.warn('[WebSocket Debug] Tentativa de subscribe sem serviceInstance:', { channel, event });
       return;
     }
-    console.log('[WebSocket Debug] Subscribing:', { channel, event });
-    serviceInstance.subscribe(channel, event, callback);
+    console.log('[WebSocket Debug] Subscribin private:', { channel, event });
+    serviceInstance.subscribePrivate(channel, event, callback);
   };
 
   const unsubscribe = (channel: string, event?: string) => {
