@@ -1,11 +1,11 @@
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import type { WebSocketConfig, WebSocketState, WebSocketMessage } from './types';
 import { WEBSOCKET_EVENTS } from './config';
 import type { Logger } from '@/utils/logger';
 import type { EventBus } from '@/utils/events';
-
+import { createWebSocketConfig } from '@/services/websocket/config'
 // Tornar Pusher disponível globalmente
 (window as any).Pusher = Pusher;
 
@@ -39,11 +39,23 @@ export class WebSocketService {
       if (this.echo) {
         this.disconnect();
       }
+      // get config 
+      console.log('Config:', this.config);  
+      const wsConfig = createWebSocketConfig()
+      const authToken = ref(localStorage.getItem('auth_token') || '')
+      wsConfig.auth = {
+        headers: {
+          Authorization: authToken.value.startsWith('Bearer ') 
+            ? authToken.value 
+            : `Bearer ${authToken.value}`
+        }
+      }
 
-      this.echo = new Echo(this.config as any); // Cast to any due to Echo types
+      console.log('Config:', wsConfig);  
+      this.echo = new Echo(wsConfig as any); // Cast to any due to Echo types
       console.log('Echo:', this.echo);
       // console das configurações
-      console.log('Config:', this.config);  
+      console.log('Config:', wsConfig);  
       await this.setupConnectionHandlers();
       
     } catch (error) {
